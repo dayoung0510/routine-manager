@@ -1,8 +1,10 @@
 'use client';
 
-export default function Home() {
-  const fb = process.env.NEXT_PUBLIC_FIREBASE_apiKey;
-  console.log('!!', fb);
+import { useState, useEffect } from 'react';
+import { useGetUsers } from 'apis/hooks';
 
-  return <>안녕하세용</>;
+export default function Home() {
+  const { data } = useGetUsers();
+
+  return <>{data?.map((i) => i.id)}</>;
 }
