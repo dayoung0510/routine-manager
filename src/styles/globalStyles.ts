@@ -44,6 +44,7 @@ a {
 @font-face {
     font-family: 'Dung';
     font-weight: 400;
+    font-display: swap;
     src: url(/fonts/DungGeunMo.eot);
     src: url(/fonts/DungGeunMo.eot?#iefix) format('embedded-opentype'),
     url(/fonts/DungGeunMo.woff2) format('woff2'),
