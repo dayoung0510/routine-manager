@@ -25,13 +25,16 @@ export default function RootLayout({
 
   const router = useRouter();
 
-  // 로그인정보 없으면 로그인페이지로 보내기
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
+      // 로그인정보 없으면 로그인페이지로
       if (!user) {
         return router.push('/login');
-      } else if (user && pathname === '/login') {
-        return router.push('/');
+      } else {
+        // 로그인됐는데 로그인페이지 접근시 메인페이지로
+        if (pathname === '/login') {
+          return router.push('/');
+        }
       }
     });
   }, [auth, pathname]);

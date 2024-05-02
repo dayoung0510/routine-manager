@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useGetUsers } from 'hooks/users';
 import useLogin from 'hooks/useLogin';
+import Pin from 'components/molecules/Pin';
 
 export default function Home() {
   const [id, setId] = useState<string>();
@@ -35,19 +36,17 @@ export default function Home() {
           );
         })}
       </UserContainer>
-      <div>
-        <input
-          type="number"
-          maxLength={4}
-          minLength={4}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-      </div>
+
+      <Pin />
+
       <div style={{ color: 'pink', marginTop: '20px' }}>클릭한아이디 {id}</div>
       <div style={{ color: 'yellowgreen', marginTop: '20px' }}>
         입력한비번 {password}
       </div>
       <div style={{ color: 'yellow', marginTop: '20px' }}>{error}</div>
+      <div style={{ color: 'red', marginTop: '20px' }}>
+        {loading && 'loading...'}
+      </div>
     </Container>
   );
 }
