@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { useGetUsers } from 'hooks/users';
 import useLogin from 'hooks/useLogin';
 import Pin from 'components/molecules/Pin';
+import Image from 'next/image';
 
 export default function Home() {
   const [id, setId] = useState<string>();
@@ -25,14 +26,22 @@ export default function Home() {
       <UserContainer>
         {users?.map((user) => {
           return (
-            <button
-              key={user.id}
-              onClick={() => {
-                setId(user.id);
-              }}
-            >
-              {user.name}
-            </button>
+            <Flex key={user.id}>
+              <Image
+                src={user.avatar}
+                width={50}
+                height={50}
+                alt={`avatar-${user.id}`}
+              />
+              <button
+                key={user.id}
+                onClick={() => {
+                  setId(user.id);
+                }}
+              >
+                {user.name}
+              </button>
+            </Flex>
           );
         })}
       </UserContainer>
@@ -59,4 +68,9 @@ const Container = styled.div`
 const UserContainer = styled.div`
   display: flex;
   column-gap: 10px;
+`;
+const Flex = styled.div`
+  display: flex;
+  flex-direction: column;
+  row-gap: 8px;
 `;

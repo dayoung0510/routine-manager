@@ -11,6 +11,7 @@ import { ToastContainer } from 'react-toastify';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from 'apis/firebase';
 
+
 export default function RootLayout({
   children,
 }: Readonly<{
