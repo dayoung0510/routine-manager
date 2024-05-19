@@ -7,7 +7,7 @@ import { collection, getDocs, query, where } from 'firebase/firestore';
 
 const realKey = process.env.NEXT_PUBLIC_FIREBASE_AUTH_PW ?? '';
 
-export default () => {
+const useLogin =  () => {
   const router = useRouter();
 
   const [error, setError] = useState<string>();
@@ -52,3 +52,5 @@ export default () => {
 
   return { subKeyLogin, loggedInUser, loading, error };
 };
+
+export default useLogin

@@ -9,7 +9,7 @@ import {
   FieldValue,
 } from 'firebase/firestore';
 
-type UserType = {
+export type UserType = {
   id: string;
   name: string;
   avatar: string;

@@ -6,8 +6,11 @@ ${reset}
 
 html,
 body {
-  background-color: #000;
-  color:#fff;
+  width:100%;
+  height:100%;
+  
+  background-color: #333;
+  color:#eee;
 
   padding: 0;
   margin: 0;
@@ -20,6 +23,7 @@ button {
   outline: 0;
   border: 0;
   cursor: pointer;
+  font-family: 'Dung', sans-serif;
 }
 
 button:disabled {
@@ -29,15 +33,18 @@ button:disabled {
 input {
   outline: 0;
   border: 0;
+  font-family: 'Dung', sans-serif;
 }
 
 a {
   color: inherit;
   text-decoration: none;
+  font-family: 'Dung', sans-serif;
 }
 
 * {
   box-sizing: border-box;
+  color:#eee;
 }
 
 

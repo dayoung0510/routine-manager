@@ -1,19 +1,19 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import styled from 'styled-components';
+import React, { useEffect, useRef, useState } from 'react';
+import styled, { css } from 'styled-components';
 import { v4 as uuidv4 } from 'uuid';
 
 type Props = {
-  onChange: (value: number) => void;
+  onChange: (value: string) => void;
 };
 
 const MAX_LENGTH = 4;
 
-const Pin = () => {
+const Pin = ({ onChange }: Props) => {
   const [pin, setPin] = useState(new Array(MAX_LENGTH).fill(''));
   const [focusIndex, setFocusIndex] = useState(0);
 
-  const inputRefs = Array.from({ length: 4 }, () =>
-    useRef<HTMLInputElement>(null!),
+  const inputRefs = useRef<Array<HTMLInputElement | null>>(
+    Array.from({ length: 4 }, () => null),
   );
 
   const handleChange = (currentIndex: number, value: string) => {
@@ -31,8 +31,10 @@ const Pin = () => {
   };
 
   useEffect(() => {
-    inputRefs[focusIndex].current.focus();
-  }, [inputRefs]);
+    const result = pin.reduce((acc, curr) => acc + curr, '');
+    onChange(result);
+    inputRefs.current[focusIndex]?.focus();
+  }, [pin, onChange, focusIndex]);
 
   return (
     <Wrapper>
@@ -44,7 +46,11 @@ const Pin = () => {
               value={value}
               maxLength={2}
               onChange={(e) => handleChange(index, e.target.value)}
-              ref={inputRefs[index]}
+              ref={(el) => {
+                if (el) {
+                  inputRefs.current[index] = el as HTMLInputElement;
+                }
+              }}
             />
           </StyledInput>
         );
@@ -57,18 +63,40 @@ export default Pin;
 
 const Wrapper = styled.div`
   display: flex;
-  column-gap: 10px;
+  column-gap: 20px;
 `;
 
 const StyledInput = styled.div`
-  width: 36px;
-  height: 36px;
-  border: 1px solid yellow;
+  width: 48px;
+  height: 48px;
+  border: 0;
+  border-bottom: 4px solid ${({ theme }) => theme.colors.white};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  ${({ theme }) =>
+    theme.device.mobile &&
+    css`
+      width: 36px;
+      height: 36px;
+    `}
 
   input {
-    width: 100%;
-    height: 100%;
+    font-size: 24px;
+    text-align: center;
+    background: 0;
+    width: 24px;
+    height: 24px;
     outline: 0;
     border: 0;
+
+    ${({ theme }) =>
+      theme.device.mobile &&
+      css`
+        width: 18px;
+        height: 18px;
+        font-size: 18px;
+      `}
   }
 `;

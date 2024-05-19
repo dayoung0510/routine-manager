@@ -25,7 +25,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "next.config.js"
-  ],
+    "next.config.js",
+    ".next/types/app/@modal/login/select/page.tsx"  ],
   "exclude": ["node_modules"]
 }

@@ -1,76 +1,70 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import styled from 'styled-components';
-import { useGetUsers } from 'hooks/users';
-import useLogin from 'hooks/useLogin';
-import Pin from 'components/molecules/Pin';
-import Image from 'next/image';
+import SelectIcon from 'components/organisms/login/SelectIcon';
+import EnterPinCode from 'components/organisms/login/EnterPinCode';
+import { TransitionGroup, Transition } from 'react-transition-group';
+import { v4 as uuidv4 } from 'uuid';
 
-export default function Home() {
-  const [id, setId] = useState<string>();
-  const [password, setPassword] = useState<string>();
+type TransitionType = 'entering' | 'entered' | 'exiting';
+const TIMEOUT = 150;
+const getTransitionStyles: Record<TransitionType, any> = {
+  entering: {
+    position: 'absolute',
+    opacity: 0,
+  },
+  entered: {
+    transition: `opacity ${TIMEOUT}ms ease-in-out, transform ${TIMEOUT}ms ease-in-out`,
+    opacity: 1,
+  },
+  exiting: {
+    transition: `opacity ${TIMEOUT}ms ease-in-out, transform ${TIMEOUT}ms ease-in-out`,
+    opacity: 0,
+  },
+};
 
-  const { data: users } = useGetUsers();
+export default function LoginPage() {
+  const [id, setId] = useState('');
 
-  const { subKeyLogin, loading, error } = useLogin();
-
-  useEffect(() => {
-    if (id && password && password.length === 4) {
-      subKeyLogin(id, password);
-    }
-  }, [id, password]);
+  const resetId = () => {
+    setId('');
+  };
 
   return (
     <Container>
-      <UserContainer>
-        {users?.map((user) => {
-          return (
-            <Flex key={user.id}>
-              <Image
-                src={user.avatar}
-                width={50}
-                height={50}
-                alt={`avatar-${user.id}`}
-              />
-              <button
-                key={user.id}
-                onClick={() => {
-                  setId(user.id);
-                }}
-              >
-                {user.name}
-              </button>
-            </Flex>
-          );
-        })}
-      </UserContainer>
-
-      <Pin />
-
-      <div style={{ color: 'pink', marginTop: '20px' }}>클릭한아이디 {id}</div>
-      <div style={{ color: 'yellowgreen', marginTop: '20px' }}>
-        입력한비번 {password}
-      </div>
-      <div style={{ color: 'yellow', marginTop: '20px' }}>{error}</div>
-      <div style={{ color: 'red', marginTop: '20px' }}>
-        {loading && 'loading...'}
-      </div>
+      <TransitionGroup style={{ position: 'relative' }}>
+        <Transition
+          key={uuidv4()}
+          timeout={{
+            enter: TIMEOUT,
+            exit: TIMEOUT,
+          }}
+        >
+          {(status) => (
+            <div
+              style={{
+                ...getTransitionStyles[status as TransitionType],
+              }}
+            >
+              {!id ? (
+                <SelectIcon onClick={setId} />
+              ) : (
+                <EnterPinCode id={id} resetId={resetId} />
+              )}
+            </div>
+          )}
+        </Transition>
+      </TransitionGroup>
     </Container>
   );
 }
 
 const Container = styled.div`
+  height: 100%;
   display: flex;
+  justify-content: center;
+  align-items: center;
   flex-direction: column;
   row-gap: 20px;
-`;
-const UserContainer = styled.div`
-  display: flex;
-  column-gap: 10px;
-`;
-const Flex = styled.div`
-  display: flex;
-  flex-direction: column;
-  row-gap: 8px;
 `;
