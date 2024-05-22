@@ -10,10 +10,10 @@ import * as Arrow from 'components/atoms/Arrows';
 
 type Props = {
   id: string;
-  resetId: () => void;
+  handleReset: () => void;
 };
 
-const EnterPinCode = ({ id, resetId }: Props) => {
+const EnterPinCode = ({ id, handleReset }: Props) => {
   const [pin, setPin] = useState<string>('');
   const { subKeyLogin, loading, error } = useLogin();
 
@@ -28,7 +28,7 @@ const EnterPinCode = ({ id, resetId }: Props) => {
 
   return (
     <Container>
-      <Arrow.Up onClick={resetId} />
+      <Arrow.Left onClick={handleReset} />
       <Image
         src={userInfo?.avatar ?? ''}
         priority

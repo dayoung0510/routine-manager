@@ -3,7 +3,9 @@ module.exports = {
   reactStrictMode: true,
   compiler: {
     removeConsole:
-      process.env.NODE_ENV === 'production' ? { exclude: ['error'] } : false,
+      process.env.NODE_ENV === 'production'
+        ? { exclude: ['error', 'warn'] }
+        : false,
     styledComponents: true,
   },
   images: {

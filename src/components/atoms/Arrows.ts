@@ -30,10 +30,10 @@ const Base = styled.i`
   }
 `;
 
-export const Left = styled(Base)`
+export const Right = styled(Base)`
   transform: rotate(45deg);
 `;
-export const Right = styled(Base)`
+export const Left = styled(Base)`
   transform: rotate(-135deg);
 `;
 

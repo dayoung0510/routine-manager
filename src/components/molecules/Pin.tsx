@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useEffect, useRef, useState } from 'react';
 import styled, { css } from 'styled-components';
 import { v4 as uuidv4 } from 'uuid';
@@ -17,6 +19,7 @@ const Pin = ({ onChange }: Props) => {
   );
 
   const handleChange = (currentIndex: number, value: string) => {
+    console.log(value, '...');
     setPin((prev) => {
       return [
         ...prev.slice(0, currentIndex),
@@ -27,6 +30,33 @@ const Pin = ({ onChange }: Props) => {
 
     if (currentIndex !== MAX_LENGTH - 1) {
       setFocusIndex(currentIndex + 1);
+    }
+  };
+
+  const handleBackspace = (currentIndex: number) => {
+    if (currentIndex >= 1) {
+      // 이미 채워진값이 있을 때
+      if (pin[currentIndex]) {
+        setPin((prev) => {
+          return [
+            ...prev.slice(0, currentIndex),
+            '',
+            ...prev.slice(currentIndex + 1),
+          ];
+        });
+        setFocusIndex(currentIndex);
+      }
+      // 빈칸에서 백스페이스 눌렀을 때
+      else {
+        setPin((prev) => {
+          return [
+            ...prev.slice(0, currentIndex - 1),
+            '',
+            ...prev.slice(currentIndex),
+          ];
+        });
+        setFocusIndex(currentIndex - 1);
+      }
     }
   };
 
@@ -43,9 +73,23 @@ const Pin = ({ onChange }: Props) => {
           <StyledInput key={uuidv4()}>
             <input
               type="text"
-              value={value}
               maxLength={2}
-              onChange={(e) => handleChange(index, e.target.value)}
+              value={value}
+              onKeyDown={(e) => {
+                if (e.key === 'Backspace') {
+                  handleBackspace(index);
+                }
+              }}
+              onChange={(e) => {
+                if (e.target.value.length > 1) {
+                  const lastChar = e.target.value.slice(-1);
+                  return handleChange(index, lastChar);
+                }
+                const isNumber = /^[0-9]$/.test(e.target.value);
+                if (isNumber) {
+                  return handleChange(index, e.target.value);
+                }
+              }}
               ref={(el) => {
                 if (el) {
                   inputRefs.current[index] = el as HTMLInputElement;
