@@ -18,7 +18,6 @@ const Main = () => {
   console.time('8 콘솔 타이머');
   console.count('9 콘솔 카운드');
 
-
   const handleLogout = async () => {
     try {
       await signOut(auth);

@@ -3,8 +3,6 @@ module.exports = {
   reactStrictMode: true,
   compiler: {
     removeConsole: true,
-  },
-  compiler: {
     styledComponents: true,
   },
   images: {
