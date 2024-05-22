@@ -2,7 +2,7 @@ module.exports = {
   swcMinify: true,
   reactStrictMode: true,
   compiler: {
-    removeConsole: true,
+    removeConsole: process.env.NODE_ENV === 'production',
     styledComponents: true,
   },
   images: {
