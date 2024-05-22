@@ -14,10 +14,8 @@ import { auth } from 'apis/firebase';
 
 export default function RootLayout({
   children,
-  modal,
 }: Readonly<{
   children: React.ReactNode;
-  modal: React.ReactNode;
 }>) {
   const queryClient = new QueryClient();
   const pathname = usePathname();
@@ -49,10 +47,7 @@ export default function RootLayout({
           <StyledComponentsRegistry>
             <GlobalStyle />
             <ThemeProvider theme={theme}>
-              <Container>
-                {children}
-                {modal}
-              </Container>
+              <Container>{children}</Container>
             </ThemeProvider>
             <ToastContainer
               position="bottom-center"
