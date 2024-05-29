@@ -1,24 +1,16 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import styled from 'styled-components';
 import useLogin from 'hooks/useLogin';
 import Pin, { MAX_LENGTH } from 'components/molecules/Pin';
-import { useGetUsers } from 'hooks/users';
-import Image from 'next/image';
-import * as Arrow from 'components/atoms/Arrows';
 
 type Props = {
   id: string;
-  handleReset: () => void;
 };
 
-const EnterPinCode = ({ id, handleReset }: Props) => {
+const EnterPinCode = ({ id }: Props) => {
   const [pin, setPin] = useState<string>('');
   const { subKeyLogin, loading, error } = useLogin();
-
-  const { data: users } = useGetUsers();
-  const userInfo = users?.[Number(id)];
 
   useEffect(() => {
     if (pin.length === MAX_LENGTH) {
@@ -27,33 +19,13 @@ const EnterPinCode = ({ id, handleReset }: Props) => {
   }, [id, pin]);
 
   return (
-    <Container>
-      <Arrow.Up onClick={handleReset} />
-      <Image
-        src={userInfo?.avatar ?? ''}
-        priority
-        width={120}
-        height={120}
-        alt={`avatar`}
-      />
-      <Pin
-        onChange={(value) => setPin(value)}
-        isInit={Boolean(pin && pin.length === MAX_LENGTH && error && !loading)}
-      />
-      <div style={{ color: 'yellow', marginTop: '20px' }}>{error}</div>
-      <div style={{ color: 'red', marginTop: '20px' }}>
-        {loading && 'loading...'}
-      </div>
-    </Container>
+    <Pin
+      onChange={(value) => setPin(value)}
+      isInit={Boolean(pin && pin.length === MAX_LENGTH && error && !loading)}
+      error={error}
+      loading={loading}
+    />
   );
 };
 
 export default EnterPinCode;
-
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  row-gap: 20px;
-`;

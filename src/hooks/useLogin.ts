@@ -7,7 +7,7 @@ import { collection, getDocs, query, where } from 'firebase/firestore';
 
 const realKey = process.env.NEXT_PUBLIC_FIREBASE_AUTH_PW ?? '';
 
-const useLogin =  () => {
+const useLogin = () => {
   const router = useRouter();
 
   const [error, setError] = useState<string>();
@@ -47,10 +47,10 @@ const useLogin =  () => {
         return; // 로그인 성공 시 함수 종료
       }
     }
-    setError('비밀번호를 확인하세요.');
+    setError('Please check password.');
   };
 
   return { subKeyLogin, loggedInUser, loading, error };
 };
 
-export default useLogin
+export default useLogin;

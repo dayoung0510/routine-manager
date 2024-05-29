@@ -7,11 +7,13 @@ import { v4 as uuidv4 } from 'uuid';
 type Props = {
   onChange: (value: string) => void;
   isInit?: boolean;
+  error?: string;
+  loading: boolean;
 };
 
 export const MAX_LENGTH = 4;
 
-const Pin = ({ onChange, isInit }: Props) => {
+const Pin = ({ onChange, isInit, error, loading }: Props) => {
   const [pin, setPin] = useState(new Array(MAX_LENGTH).fill(''));
   const [focusIndex, setFocusIndex] = useState(0);
 
@@ -74,45 +76,51 @@ const Pin = ({ onChange, isInit }: Props) => {
   }, [isInit]);
 
   return (
-    <Wrapper>
-      {pin.map((value, index) => {
-        return (
-          <StyledInput key={uuidv4()}>
-            <input
-              type="password"
-              maxLength={2}
-              value={value}
-              onKeyDown={(e) => {
-                if (e.key === 'Backspace') {
-                  handleBackspace(index);
-                }
-              }}
-              onChange={(e) => {
-                if (e.target.value.length > 1) {
-                  const lastChar = e.target.value.slice(-1);
-                  return handleChange(index, lastChar);
-                }
-                const isNumber = /^[0-9]$/.test(e.target.value);
-                if (isNumber) {
-                  return handleChange(index, e.target.value);
-                }
-              }}
-              ref={(el) => {
-                if (el) {
-                  inputRefs.current[index] = el as HTMLInputElement;
-                }
-              }}
-            />
-          </StyledInput>
-        );
-      })}
-    </Wrapper>
+    <div style={{ position: 'relative' }}>
+      <InputsWrapper>
+        {pin.map((value, index) => {
+          return (
+            <StyledInput key={uuidv4()}>
+              <input
+                type="password"
+                maxLength={2}
+                value={value}
+                onKeyDown={(e) => {
+                  if (e.key === 'Backspace') {
+                    handleBackspace(index);
+                  }
+                }}
+                onChange={(e) => {
+                  if (e.target.value.length > 1) {
+                    const lastChar = e.target.value.slice(-1);
+                    return handleChange(index, lastChar);
+                  }
+                  const isNumber = /^[0-9]$/.test(e.target.value);
+                  if (isNumber) {
+                    return handleChange(index, e.target.value);
+                  }
+                }}
+                ref={(el) => {
+                  if (el) {
+                    inputRefs.current[index] = el as HTMLInputElement;
+                  }
+                }}
+              />
+            </StyledInput>
+          );
+        })}
+      </InputsWrapper>
+
+      <MessageWrapper $isError={!!error}>
+        {loading ? 'loading...' : error}
+      </MessageWrapper>
+    </div>
   );
 };
 
 export default Pin;
 
-const Wrapper = styled.div`
+const InputsWrapper = styled.div`
   display: flex;
   column-gap: 20px;
 `;
@@ -150,4 +158,12 @@ const StyledInput = styled.div`
         font-size: 18px;
       `}
   }
+`;
+
+const MessageWrapper = styled.div<{ $isError: boolean }>`
+  position: absolute;
+  bottom: -50px;
+
+  color: ${(props) =>
+    props.$isError ? props.theme.colors.red : props.theme.colors.mint};
 `;
