@@ -6,11 +6,12 @@ import { v4 as uuidv4 } from 'uuid';
 
 type Props = {
   onChange: (value: string) => void;
+  isInit?: boolean;
 };
 
-const MAX_LENGTH = 4;
+export const MAX_LENGTH = 4;
 
-const Pin = ({ onChange }: Props) => {
+const Pin = ({ onChange, isInit }: Props) => {
   const [pin, setPin] = useState(new Array(MAX_LENGTH).fill(''));
   const [focusIndex, setFocusIndex] = useState(0);
 
@@ -19,7 +20,6 @@ const Pin = ({ onChange }: Props) => {
   );
 
   const handleChange = (currentIndex: number, value: string) => {
-    console.log(value, '...');
     setPin((prev) => {
       return [
         ...prev.slice(0, currentIndex),
@@ -66,13 +66,20 @@ const Pin = ({ onChange }: Props) => {
     inputRefs.current[focusIndex]?.focus();
   }, [pin, onChange, focusIndex]);
 
+  useEffect(() => {
+    if (isInit) {
+      setPin(new Array(MAX_LENGTH).fill(''));
+      setFocusIndex(0);
+    }
+  }, [isInit]);
+
   return (
     <Wrapper>
       {pin.map((value, index) => {
         return (
           <StyledInput key={uuidv4()}>
             <input
-              type="text"
+              type="password"
               maxLength={2}
               value={value}
               onKeyDown={(e) => {

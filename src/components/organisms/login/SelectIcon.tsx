@@ -16,7 +16,6 @@ const SelectIcon = ({ onClick }: Props) => {
     <Container>
       <UserContainer>
         {users?.map((user) => {
-          console.log(user.name);
           return (
             <IconGrid key={user.id} onClick={() => onClick(user.id)}>
               <Image

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import useLogin from 'hooks/useLogin';
-import Pin from 'components/molecules/Pin';
+import Pin, { MAX_LENGTH } from 'components/molecules/Pin';
 import { useGetUsers } from 'hooks/users';
 import Image from 'next/image';
 import * as Arrow from 'components/atoms/Arrows';
@@ -21,14 +21,14 @@ const EnterPinCode = ({ id, handleReset }: Props) => {
   const userInfo = users?.[Number(id)];
 
   useEffect(() => {
-    if (pin.length === 4) {
+    if (pin.length === MAX_LENGTH) {
       subKeyLogin(id, pin);
     }
   }, [id, pin]);
 
   return (
     <Container>
-      <Arrow.Left onClick={handleReset} />
+      <Arrow.Up onClick={handleReset} />
       <Image
         src={userInfo?.avatar ?? ''}
         priority
@@ -36,7 +36,10 @@ const EnterPinCode = ({ id, handleReset }: Props) => {
         height={120}
         alt={`avatar`}
       />
-      <Pin onChange={(value) => setPin(value)} />
+      <Pin
+        onChange={(value) => setPin(value)}
+        isInit={Boolean(pin && pin.length === MAX_LENGTH && error && !loading)}
+      />
       <div style={{ color: 'yellow', marginTop: '20px' }}>{error}</div>
       <div style={{ color: 'red', marginTop: '20px' }}>
         {loading && 'loading...'}
