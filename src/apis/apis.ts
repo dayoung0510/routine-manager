@@ -7,6 +7,7 @@ import {
   query,
   where,
   FieldValue,
+  updateDoc,
 } from 'firebase/firestore';
 
 export type UserType = {
@@ -21,4 +22,15 @@ export const getUsers = async () => {
   const data = querySnapshot.docs.map((doc) => doc.data());
 
   return data as UserType[];
+};
+
+/* 유저네임 설정 */
+export const putUserName = async ({
+  id,
+  name,
+}: Pick<UserType, 'id' | 'name'>) => {
+  const washingtonRef = doc(db, 'users', id);
+  await updateDoc(washingtonRef, {
+    name,
+  });
 };

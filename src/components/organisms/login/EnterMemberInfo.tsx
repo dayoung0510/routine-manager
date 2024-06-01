@@ -1,7 +1,8 @@
+import { useState } from 'react';
 import styled from 'styled-components';
 import Image from 'next/image';
 import * as Arrow from 'components/atoms/Arrows';
-import { useGetUsers } from 'hooks/users';
+import { useGetUsers, usePutUserName } from 'hooks/users';
 import Input from 'components/atoms/Input';
 import EnterPinCode from './EnterPinCode';
 
@@ -11,8 +12,16 @@ type Props = {
 };
 
 const EnterMemberInfo = ({ id, handleReset }: Props) => {
+  const [name, setName] = useState('');
+
   const { data: users } = useGetUsers();
   const userInfo = users?.[Number(id)];
+
+  const { mutate: putUserName } = usePutUserName();
+
+  const handleSubmitName = (name: string) => {
+    putUserName({ id, name });
+  };
 
   return (
     <Container>
@@ -29,7 +38,13 @@ const EnterMemberInfo = ({ id, handleReset }: Props) => {
         // 기존회원 pin code 입력
         <EnterPinCode id={id} />
       ) : (
-        <Input placeholder="please enter a name." />
+        <>
+          <Input
+            onChange={(e) => setName(e.target.value)}
+            placeholder="please enter a name."
+          />
+          <button onClick={() => handleSubmitName(name)}>CONFIRM</button>
+        </>
       )}
     </Container>
   );
