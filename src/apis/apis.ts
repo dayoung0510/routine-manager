@@ -29,8 +29,38 @@ export const putUserName = async ({
   id,
   name,
 }: Pick<UserType, 'id' | 'name'>) => {
-  const washingtonRef = doc(db, 'users', id);
-  await updateDoc(washingtonRef, {
+  const docRef = doc(db, 'users', id);
+  await updateDoc(docRef, {
     name,
   });
+};
+
+/* 특정회원id에 기존 설정한 비번 존재 여부 */
+export const getUserPasswordExist = async (id: string) => {
+  const q = query(
+    collection(db, 'passwords'),
+    where('id', '==', id),
+    where('value', '!=', ''),
+  );
+
+  const docRef = doc(db, 'passwords', id);
+  const docSnap = await getDoc(docRef);
+
+  if (docSnap.exists()) {
+    return docSnap.data().value?.length > 0;
+  }
+
+  return false;
+};
+
+/* 첫 pin 설정 */
+export const postUserPassword = async ({
+  id,
+  value,
+}: {
+  id: string;
+  value: string;
+}) => {
+  const docRef = doc(db, 'passwords', id);
+  await updateDoc(docRef, { value });
 };

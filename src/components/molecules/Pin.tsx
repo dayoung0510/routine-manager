@@ -8,12 +8,13 @@ type Props = {
   onChange: (value: string) => void;
   isInit?: boolean;
   error?: string;
-  loading: boolean;
+  loading?: boolean;
+  underlineColor?: string;
 };
 
 export const MAX_LENGTH = 4;
 
-const Pin = ({ onChange, isInit, error, loading }: Props) => {
+const Pin = ({ onChange, isInit, error, loading, underlineColor }: Props) => {
   const [pin, setPin] = useState(new Array(MAX_LENGTH).fill(''));
   const [focusIndex, setFocusIndex] = useState(0);
 
@@ -80,7 +81,7 @@ const Pin = ({ onChange, isInit, error, loading }: Props) => {
       <InputsWrapper>
         {pin.map((value, index) => {
           return (
-            <StyledInput key={uuidv4()}>
+            <StyledInput key={uuidv4()} $underlineColor={underlineColor}>
               <input
                 type="password"
                 maxLength={2}
@@ -125,11 +126,14 @@ const InputsWrapper = styled.div`
   column-gap: 20px;
 `;
 
-const StyledInput = styled.div`
+const StyledInput = styled.div<{ $underlineColor?: string }>`
   width: 48px;
   height: 48px;
   border: 0;
-  border-bottom: 4px solid ${({ theme }) => theme.colors.white};
+  border-bottom: 4px solid
+    ${(props) =>
+      props.$underlineColor ? props.$underlineColor : props.theme.colors.white};
+
   display: flex;
   justify-content: center;
   align-items: center;
