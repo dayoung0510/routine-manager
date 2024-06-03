@@ -4,6 +4,7 @@ import Image from 'next/image';
 import * as Arrow from 'components/atoms/Arrows';
 import { useGetUsers, usePutUserName } from 'hooks/users';
 import Input from 'components/atoms/Input';
+import Button from 'components/atoms/Button';
 import EnterPinCode from './EnterPinCode';
 
 type Props = {
@@ -43,7 +44,7 @@ const EnterMemberInfo = ({ id, handleReset }: Props) => {
             onChange={(e) => setName(e.target.value)}
             placeholder="please enter a name."
           />
-          <button onClick={() => handleSubmitName(name)}>CONFIRM</button>
+          <Button onClick={() => handleSubmitName(name)}>CONFIRM</Button>
         </>
       )}
     </Container>

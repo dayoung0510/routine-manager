@@ -53,7 +53,6 @@ export default function LoginPage() {
                   <SelectIcon onClick={setId} />
                 ) : (
                   <EnterMemberInfo id={id} handleReset={handleReset} />
-                  // <EnterPinCode id={id} handleReset={handleReset} />
                 )}
               </div>
             );
