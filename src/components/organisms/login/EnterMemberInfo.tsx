@@ -5,6 +5,7 @@ import * as Arrow from 'components/atoms/Arrows';
 import { useGetUsers, usePutUserName } from 'hooks/users';
 import Input from 'components/atoms/Input';
 import Button from 'components/atoms/Button';
+import Icon from 'components/atoms/icon/Icon';
 import EnterPinCode from './EnterPinCode';
 
 type Props = {
@@ -44,7 +45,8 @@ const EnterMemberInfo = ({ id, handleReset }: Props) => {
             onChange={(e) => setName(e.target.value)}
             placeholder="please enter a name."
           />
-          <Button onClick={() => handleSubmitName(name)}>CONFIRM</Button>
+          <Icon name="cursor" color="mint" />
+          {/* <Button onClick={() => handleSubmitName(name)}>CONFIRM</Button> */}
         </>
       )}
     </Container>

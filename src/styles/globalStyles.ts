@@ -44,7 +44,6 @@ a {
 
 * {
   box-sizing: border-box;
-  color:#eee;
 }
 
 
