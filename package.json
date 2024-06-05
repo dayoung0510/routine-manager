@@ -36,6 +36,7 @@
     "firebase": "^10.11.0",
     "prettier": "^3.2.5",
     "react-cookie": "^7.1.4",
+    "react-responsive": "^10.0.0",
     "styled-reset": "^4.5.2",
     "typescript": "^5",
     "uuid": "^9.0.1"

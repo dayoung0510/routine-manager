@@ -138,12 +138,10 @@ const StyledInput = styled.div<{ $underlineColor?: string }>`
   justify-content: center;
   align-items: center;
 
-  ${({ theme }) =>
-    theme.device.mobile &&
-    css`
-      width: 36px;
-      height: 36px;
-    `}
+  ${({ theme }) => theme.device.mobile} {
+    width: 36px;
+    height: 36px;
+  }
 
   input {
     font-size: 24px;

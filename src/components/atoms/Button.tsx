@@ -31,17 +31,25 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
   color?: ColorType;
   size?: SizeType;
+  isFull?: boolean;
 }
 
 const Button = ({
   size = 'md',
   color = 'mint',
+  isFull = false,
   children,
   ...props
 }: ButtonProps) => {
   const darken = darkenColor(theme.colors[color], 80);
   return (
-    <StyledButton {...props} $size={size} $color={color} $darken={darken}>
+    <StyledButton
+      {...props}
+      $size={size}
+      $color={color}
+      $darken={darken}
+      $isFull={isFull}
+    >
       {children}
     </StyledButton>
   );
@@ -53,7 +61,9 @@ const StyledButton = styled.button<{
   $color: ColorType;
   $darken: string;
   $size: SizeType;
+  $isFull: boolean;
 }>`
+  width: ${(props) => (props.$isFull ? '100%' : 'auto')};
   outline: 0;
   border: 0;
   cursor: pointer;
