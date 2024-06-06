@@ -5,7 +5,10 @@ export const theme = {
     purple: '#657CEA',
     lilac: '#a1acfe',
     white: '#eee',
-    darkGray: '#222',
+    black: '#222',
+    darkGray: '#777',
+    midGray: '#acacac',
+    lightGray: '#ececec',
   },
   device: {
     mobile: `@media only screen and (max-width: 768px)`,

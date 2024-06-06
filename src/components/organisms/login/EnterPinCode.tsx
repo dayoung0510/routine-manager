@@ -18,7 +18,7 @@ const EnterPinCode = ({ id, name }: Props) => {
   const [firstPin, setFirstPin] = useState<string>('');
   const { subKeyLogin, loading, error } = useLogin();
 
-  const { data: isPasswordExist } = useGetUserPasswordExist(id);
+  const { data: isPasswordExist, isPending } = useGetUserPasswordExist(id);
   const { mutate: postFirstPin } = usePostUserPassword();
 
   // 기존회원 로그인
@@ -37,14 +37,14 @@ const EnterPinCode = ({ id, name }: Props) => {
   const isFirstPasswordSetting = !!name && !isPasswordExist;
 
   useEffect(() => {
-    if (isFirstPasswordSetting) {
+    if (isFirstPasswordSetting && !isPending) {
       setOpen(true);
     }
-  }, [isFirstPasswordSetting]);
+  }, [isFirstPasswordSetting, isPending]);
 
   return (
     <>
-      <div style={{ fontSize: '36px' }}>{name}</div>
+      <NameWrapper>{name}</NameWrapper>
       {isFirstPasswordSetting ? (
         // 첫 비번 설정
         <Modal
@@ -88,4 +88,14 @@ const FirstPinContainer = styled.div`
   align-items: center;
   height: 100%;
   row-gap: 16px;
+`;
+
+const NameWrapper = styled.div`
+  /* color: ${({ theme }) => theme.colors.midGray}; */
+  color: #aaa;
+  font-size: 2rem;
+
+  ${({ theme }) => theme.device.mobile} {
+    font-size: 1rem;
+  }
 `;

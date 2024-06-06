@@ -77,7 +77,13 @@ const Pin = ({ onChange, isInit, error, loading, underlineColor }: Props) => {
   }, [isInit]);
 
   return (
-    <div style={{ position: 'relative' }}>
+    <div
+      style={{
+        position: 'relative',
+        display: 'flex',
+        justifyContent: 'center',
+      }}
+    >
       <InputsWrapper>
         {pin.map((value, index) => {
           return (
@@ -123,7 +129,7 @@ export default Pin;
 
 const InputsWrapper = styled.div`
   display: flex;
-  column-gap: 20px;
+  column-gap: 1.5rem;
 `;
 
 const StyledInput = styled.div<{ $underlineColor?: string }>`
@@ -151,6 +157,7 @@ const StyledInput = styled.div<{ $underlineColor?: string }>`
     height: 24px;
     outline: 0;
     border: 0;
+    color: ${({ theme }) => theme.colors.white};
 
     ${({ theme }) =>
       theme.device.mobile &&

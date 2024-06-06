@@ -5,7 +5,6 @@ import * as Arrow from 'components/atoms/Arrows';
 import { useGetUsers, usePutUserName } from 'hooks/users';
 import Input from 'components/atoms/Input';
 import Button from 'components/atoms/Button';
-import Back from '../../../../public/icons/undo.png';
 import EnterPinCode from './EnterPinCode';
 
 type Props = {
@@ -27,14 +26,7 @@ const EnterMemberInfo = ({ id, handleReset }: Props) => {
 
   return (
     <Container>
-      {/* <Arrow.Up onClick={handleReset} /> */}
-      <Image
-        src={Back}
-        width={60}
-        height={60}
-        alt="back"
-        onClick={handleReset}
-      />
+      <Arrow.Up onClick={handleReset} />
       <Image
         src={userInfo?.avatar ?? ''}
         priority
@@ -47,12 +39,14 @@ const EnterMemberInfo = ({ id, handleReset }: Props) => {
         // 기존회원 pin code 입력
         <EnterPinCode id={id} name={userInfo.name} />
       ) : (
+        // 새회원 닉네임 입력
         <>
           <Input
             onChange={(e) => setName(e.target.value)}
             placeholder="please enter a name."
+            maxLength={6}
           />
-          <Button isFull color="purple" onClick={() => handleSubmitName(name)}>
+          <Button isFull color="mint" onClick={() => handleSubmitName(name)}>
             CONFIRM
           </Button>
         </>
