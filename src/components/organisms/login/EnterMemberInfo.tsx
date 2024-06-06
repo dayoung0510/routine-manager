@@ -5,6 +5,7 @@ import * as Arrow from 'components/atoms/Arrows';
 import { useGetUsers, usePutUserName } from 'hooks/users';
 import Input from 'components/atoms/Input';
 import Button from 'components/atoms/Button';
+import Back from '../../../../public/icons/undo.png';
 import EnterPinCode from './EnterPinCode';
 
 type Props = {
@@ -26,7 +27,14 @@ const EnterMemberInfo = ({ id, handleReset }: Props) => {
 
   return (
     <Container>
-      <Arrow.Up onClick={handleReset} />
+      {/* <Arrow.Up onClick={handleReset} /> */}
+      <Image
+        src={Back}
+        width={60}
+        height={60}
+        alt="back"
+        onClick={handleReset}
+      />
       <Image
         src={userInfo?.avatar ?? ''}
         priority
