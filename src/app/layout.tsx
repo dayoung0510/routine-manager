@@ -64,5 +64,12 @@ export default function RootLayout({
 
 const Container = styled.div`
   width: 100%;
-  height: 100vh;
+  height: 100%;
+  min-height: 100vh;
+
+  ${({ theme }) => theme.device.mobile} {
+    min-height: auto;
+    height: auto;
+    padding: 2rem 1rem 4rem 1rem;
+  }
 `;

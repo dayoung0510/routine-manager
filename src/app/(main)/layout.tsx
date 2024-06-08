@@ -11,7 +11,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
     <Container>
       <StrokeBox
         $pd={1}
-        $thick={10}
+        $thick={1.2}
         style={{
           position: 'relative',
           width: isMobile ? '90%' : '800px',

@@ -33,10 +33,11 @@ const SelectIcon = ({ onClick }: Props) => {
                 alt={`avatar-${user.id}`}
               />
               <StrokeBox
-                $thick={4}
+                $thick={1}
+                $step={2}
                 $isFull
-                $pd={[0.25, 1]}
-                $ftSize={1.2}
+                $pd={[0.25, 0.5]}
+                $ftSize={isMobile ? 1 : 1.2}
                 style={{ textAlign: 'center' }}
               >
                 {user.name.length > 0 ? user.name : '_____'}
@@ -61,12 +62,12 @@ const Grid = styled.div`
   width: 100%;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  column-gap: 2.5rem;
+  column-gap: 3rem;
   row-gap: 3rem;
 
   ${({ theme }) => theme.device.mobile} {
     grid-template-columns: repeat(2, 1fr);
-    column-gap: 1rem;
+    row-gap: 3.5rem;
   }
 `;
 const UserContainer = styled.div<{ $isMobile: boolean }>`

@@ -9,7 +9,7 @@ body {
   width:100%;
   height:100%;
   
-  background-color: #333;
+  background-color: #555;
   color:#eee;
 
   padding: 0;
