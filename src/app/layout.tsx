@@ -68,8 +68,6 @@ const Container = styled.div`
   min-height: 100vh;
 
   ${({ theme }) => theme.device.mobile} {
-    min-height: auto;
     height: auto;
-    padding: 2rem 1rem 4rem 1rem;
   }
 `;

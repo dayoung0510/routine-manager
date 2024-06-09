@@ -66,7 +66,7 @@ const Grid = styled.div`
   row-gap: 3rem;
 
   ${({ theme }) => theme.device.mobile} {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     row-gap: 3.5rem;
   }
 `;
@@ -77,16 +77,4 @@ const UserContainer = styled.div<{ $isMobile: boolean }>`
   align-items: center;
   row-gap: 1rem;
   cursor: pointer;
-`;
-const NameWraaper = styled.div`
-  width: 100%;
-  padding: 0.25rem;
-  text-align: center;
-  background-color: ${({ theme }) => theme.colors.lightGray};
-  color: ${({ theme }) => theme.colors.black};
-  box-shadow:
-    -4px 0 0 0 ${({ theme }) => theme.colors.black},
-    4px 0 0 0 ${({ theme }) => theme.colors.black},
-    0 -4px 0 0 ${({ theme }) => theme.colors.black},
-    0 4px 0 0 ${({ theme }) => theme.colors.black};
 `;

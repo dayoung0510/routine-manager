@@ -70,5 +70,5 @@ const Container = styled.div`
   align-items: center;
   flex-direction: column;
   row-gap: 20px;
-  background-color: #555;
+  background-color: #2e2e2e;
 `;

@@ -10,7 +10,7 @@ body {
   height:100%;
   
   background-color: #555;
-  color:#eee;
+  color:#222;
 
   padding: 0;
   margin: 0;
