@@ -3,7 +3,7 @@
 const Main = () => {
   return (
     <>
-      <div>main</div>
+      <div>todo list</div>
     </>
   );
 };

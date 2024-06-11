@@ -10,6 +10,9 @@ import { signOut } from 'firebase/auth';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
 import Button from 'components/atoms/Button';
+import SideBar from 'components/molecules/SideBar';
+
+const TOP_NAVBAR_HEIGHT = 2.5;
 
 const MainLayout = ({ children }: { children: React.ReactNode }) => {
   const isMobile = useMediaQuery();
@@ -38,7 +41,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
           maxHeight: isMobile ? '100%' : '550px',
         }}
       >
-        <NavBar>
+        <TopNavBar>
           <div style={{ letterSpacing: '2px', fontSize: '1.3rem' }}>
             {dayjs().format('YYYY/MM/DD (ddd)')}
           </div>
@@ -52,9 +55,12 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
               X
             </Button>
           </div>
-        </NavBar>
+        </TopNavBar>
 
-        <ChildrenWrapper>{children}</ChildrenWrapper>
+        <ContentContainer>
+          <SideBar />
+          <ChildrenWrapper>{children}</ChildrenWrapper>
+        </ContentContainer>
       </StrokeBox>
     </Container>
   );
@@ -76,13 +82,13 @@ const Container = styled.div`
   ${bg.slash2}
 `;
 
-const NavBar = styled.div`
+const TopNavBar = styled.div`
   width: 100%;
   position: relative;
   z-index: 2;
   border-bottom: 4px solid black;
 
-  height: 3rem;
+  height: ${TOP_NAVBAR_HEIGHT}rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -121,8 +127,16 @@ const NavBar = styled.div`
   }
 `;
 
+const ContentContainer = styled.div`
+  display: flex;
+  width: 100%;
+  height: calc(100% - ${TOP_NAVBAR_HEIGHT}rem);
+  padding-top: 4px;
+`;
+
 const ChildrenWrapper = styled.div`
   padding: 1rem;
-  height: calc(100% - 3rem);
+  width: 100%;
+  height: 100%;
   overflow-y: auto;
 `;
