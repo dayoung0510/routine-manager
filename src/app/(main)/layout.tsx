@@ -11,8 +11,7 @@ import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
 import Button from 'components/atoms/Button';
 import SideBar from 'components/molecules/SideBar';
-
-const TOP_NAVBAR_HEIGHT = 2.5;
+import { TOP_NAVBAR_HEIGHT } from 'constants/constants';
 
 const MainLayout = ({ children }: { children: React.ReactNode }) => {
   const isMobile = useMediaQuery();
@@ -132,6 +131,10 @@ const ContentContainer = styled.div`
   width: 100%;
   height: calc(100% - ${TOP_NAVBAR_HEIGHT}rem);
   padding-top: 4px;
+
+  ${({ theme }) => theme.device.mobile} {
+    flex-direction: column;
+  }
 `;
 
 const ChildrenWrapper = styled.div`

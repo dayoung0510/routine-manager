@@ -1,3 +1,5 @@
+import { MOBILE_SIZE } from 'constants/constants';
+
 export const theme = {
   colors: {
     red: '#eb5454',
@@ -11,7 +13,7 @@ export const theme = {
     lightGray: '#ececec',
   },
   device: {
-    mobile: `@media only screen and (max-width: 768px)`,
+    mobile: `@media only screen and (max-width: ${MOBILE_SIZE}px)`,
   },
 };
 

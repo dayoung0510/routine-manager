@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import Link from 'next/link';
+import { useMediaQuery } from 'hooks/useMediaQuery';
 
 const menus = [
   { index: 0, title: 'TODO', link: '/' },
@@ -9,6 +10,8 @@ const menus = [
 ];
 
 const SideBar = () => {
+  const isMobile = useMediaQuery();
+
   return (
     <Container>
       {menus.map((menu) => (
@@ -30,6 +33,17 @@ const Container = styled.div`
   height: 100%;
   font-size: 1.5rem;
   border-right: 1px solid ${({ theme }) => theme.colors.black};
+
+  ${({ theme }) => theme.device.mobile} {
+    width: auto;
+    height: auto;
+    flex-direction: row;
+    column-gap: 1rem;
+    overflow-x: auto;
+    padding: 1rem 0.5rem;
+    justify-content: center;
+    border-right: 0;
+  }
 `;
 
 const Item = styled.div``;

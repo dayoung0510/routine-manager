@@ -38,6 +38,7 @@ const SelectIcon = ({ onClick }: Props) => {
                 $isFull
                 $pd={[0.25, 0.5]}
                 $ftSize={isMobile ? 1 : 1.2}
+                $bgColor="white"
                 style={{ textAlign: 'center' }}
               >
                 {user.name.length > 0 ? user.name : '_____'}

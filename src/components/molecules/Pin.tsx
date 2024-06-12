@@ -89,7 +89,7 @@ const Pin = ({ onChange, isInit, error, loading, underlineColor }: Props) => {
           return (
             <StyledInput key={uuidv4()} $underlineColor={underlineColor}>
               <input
-                type="password"
+                type="number"
                 maxLength={2}
                 value={value}
                 onKeyDown={(e) => {

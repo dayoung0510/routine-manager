@@ -7,20 +7,21 @@ import EnterPinCode from 'components/organisms/login/EnterPinCode';
 import { TransitionGroup, Transition } from 'react-transition-group';
 import EnterMemberInfo from 'components/organisms/login/EnterMemberInfo';
 import { v4 as uuidv4 } from 'uuid';
+import { PAGE_TURN_TIMEOUT } from 'constants/constants';
 
 type TransitionType = 'entering' | 'entered' | 'exiting';
-const TIMEOUT = 150;
+
 const getTransitionStyles: Record<TransitionType, any> = {
   entering: {
     position: 'absolute',
     opacity: 0,
   },
   entered: {
-    transition: `opacity ${TIMEOUT}ms ease-in-out, transform ${TIMEOUT}ms ease-in-out`,
+    transition: `opacity ${PAGE_TURN_TIMEOUT}ms ease-in-out, transform ${PAGE_TURN_TIMEOUT}ms ease-in-out`,
     opacity: 1,
   },
   exiting: {
-    transition: `opacity ${TIMEOUT}ms ease-in-out, transform ${TIMEOUT}ms ease-in-out`,
+    transition: `opacity ${PAGE_TURN_TIMEOUT}ms ease-in-out, transform ${PAGE_TURN_TIMEOUT}ms ease-in-out`,
     opacity: 0,
   },
 };
@@ -38,8 +39,8 @@ export default function LoginPage() {
         <Transition
           key={uuidv4()}
           timeout={{
-            enter: TIMEOUT,
-            exit: TIMEOUT,
+            enter: PAGE_TURN_TIMEOUT,
+            exit: PAGE_TURN_TIMEOUT,
           }}
         >
           {(status) => {
@@ -70,5 +71,4 @@ const Container = styled.div`
   align-items: center;
   flex-direction: column;
   row-gap: 20px;
-  background-color: #2e2e2e;
 `;
