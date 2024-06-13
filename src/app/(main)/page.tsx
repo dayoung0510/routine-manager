@@ -1,9 +1,15 @@
 'use client';
 
+import { useState } from 'react';
+import Button from 'components/atoms/Button';
+
 const Main = () => {
+  const [content, setContent] = useState('');
+
   return (
     <>
-      <div>todo list</div>
+      <input onChange={(e) => setContent(e.target.value)} />
+      <Button onClick={() => console.log()}>CONFIRM</Button>
     </>
   );
 };
