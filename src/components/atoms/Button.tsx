@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components';
 import { ButtonHTMLAttributes } from 'react';
 import theme from 'styles/theme';
-import { darkenColor } from 'utils/common';
+import { darkenColor, lightenColor } from 'utils/common';
 
 type ColorType = keyof typeof theme.colors;
 type SizeType = 'sm' | 'md' | 'lg';
@@ -41,13 +41,13 @@ const Button = ({
   children,
   ...props
 }: ButtonProps) => {
-  const darken = darkenColor(theme.colors[color], 80);
+  const subColor = darkenColor(theme.colors[color], 40);
   return (
     <StyledButton
       {...props}
       $size={size}
       $color={color}
-      $darken={darken}
+      $subColor={subColor}
       $isFull={isFull}
     >
       {children}
@@ -59,7 +59,7 @@ export default Button;
 
 const StyledButton = styled.button<{
   $color: ColorType;
-  $darken: string;
+  $subColor: string;
   $size: SizeType;
   $isFull: boolean;
 }>`
@@ -70,13 +70,13 @@ const StyledButton = styled.button<{
   letter-spacing: 1px;
 
   background-color: ${(props) => props.theme.colors[props.$color]};
-  color: ${(props) => (props.$color === 'white' ? '#000' : props.$darken)};
+  color: ${(props) => (props.$color === 'white' ? '#000' : props.$subColor)};
 
   box-shadow: ${(props) => `
-  -${boxShadowStyles[props.$size]} 0 0 0 ${props.$darken},
-  ${boxShadowStyles[props.$size]} 0 0 0 ${props.$darken},
-  0 -${boxShadowStyles[props.$size]} 0 0 ${props.$darken},
-  0 ${boxShadowStyles[props.$size]} 0 0 ${props.$darken}
+  -${boxShadowStyles[props.$size]} 0 0 0 ${props.$subColor},
+  ${boxShadowStyles[props.$size]} 0 0 0 ${props.$subColor},
+  0 -${boxShadowStyles[props.$size]} 0 0 ${props.$subColor},
+  0 ${boxShadowStyles[props.$size]} 0 0 ${props.$subColor}
 `};
 
   ${(props) => sizeStyles[props.$size]};

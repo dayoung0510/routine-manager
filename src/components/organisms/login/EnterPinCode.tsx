@@ -6,17 +6,19 @@ import useLogin from 'hooks/useLogin';
 import Pin, { MAX_LENGTH } from 'components/molecules/Pin';
 import { useGetUserPasswordExist, usePostUserPassword } from 'hooks/users';
 import Modal from 'components/molecules/Modal';
+import { updateProfile } from 'firebase/auth';
 
 type Props = {
   id: string;
   name: string;
+  avatar: string;
 };
 
-const EnterPinCode = ({ id, name }: Props) => {
+const EnterPinCode = ({ id, name, avatar }: Props) => {
   const [open, setOpen] = useState<boolean>(false);
   const [pin, setPin] = useState<string>('');
   const [firstPin, setFirstPin] = useState<string>('');
-  const { subKeyLogin, loading, error } = useLogin();
+  const { subKeyLogin, loading, error } = useLogin({ id, name, avatar });
 
   const { data: isPasswordExist, isPending } = useGetUserPasswordExist(id);
   const { mutate: postFirstPin } = usePostUserPassword();
@@ -30,7 +32,7 @@ const EnterPinCode = ({ id, name }: Props) => {
 
   useEffect(() => {
     if (firstPin.length === MAX_LENGTH) {
-      postFirstPin({ id, value: firstPin });
+      postFirstPin({ id, value: firstPin }, { onSuccess: () => {} });
     }
   }, [id, firstPin]);
 
@@ -91,7 +93,6 @@ const FirstPinContainer = styled.div`
 `;
 
 const NameWrapper = styled.div`
-  /* color: ${({ theme }) => theme.colors.midGray}; */
   color: #aaa;
   font-size: 2rem;
 

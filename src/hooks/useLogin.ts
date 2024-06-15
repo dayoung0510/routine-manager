@@ -1,18 +1,31 @@
 import { useRouter } from 'next/navigation';
-import { signInWithEmailAndPassword, UserCredential } from 'firebase/auth';
+import {
+  signInWithEmailAndPassword,
+  UserCredential,
+  updateProfile,
+} from 'firebase/auth';
 import { useCallback, useState } from 'react';
 import dayjs from 'dayjs';
 import { auth, db } from 'apis/firebase';
 import { collection, getDocs, query, where } from 'firebase/firestore';
+import { useSetAtom } from 'jotai';
+import { userAtom } from 'atoms/user';
 
 const realKey = process.env.NEXT_PUBLIC_FIREBASE_AUTH_PW ?? '';
 
-const useLogin = () => {
+type Props = {
+  id: string;
+  name: string;
+  avatar: string;
+};
+
+const useLogin = ({ id, name, avatar }: Props) => {
   const router = useRouter();
 
   const [error, setError] = useState<string>();
-  const [loggedInUser, setLoggedInUser] = useState<UserCredential>();
   const [loading, setLoading] = useState<boolean>(false);
+
+  const setUser = useSetAtom(userAtom);
 
   const login = useCallback(
     async (email: string, password: string) => {
@@ -20,7 +33,8 @@ const useLogin = () => {
       setError(undefined);
       try {
         const user = await signInWithEmailAndPassword(auth, email, password);
-        setLoggedInUser(user);
+        // set localStorage
+        setUser({ name, avatar, id });
         router.push('/');
         return user;
       } catch (err) {
@@ -50,7 +64,7 @@ const useLogin = () => {
     setError('Please check password.');
   };
 
-  return { subKeyLogin, loggedInUser, loading, error };
+  return { subKeyLogin, loading, error };
 };
 
 export default useLogin;

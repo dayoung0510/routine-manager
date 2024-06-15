@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import styled, { css } from 'styled-components';
 import StrokeBox from 'components/atoms/StrokeBox';
 import { useMediaQuery } from 'hooks/useMediaQuery';
@@ -12,14 +13,20 @@ import { useRouter } from 'next/navigation';
 import Button from 'components/atoms/Button';
 import SideBar from 'components/molecules/SideBar';
 import { TOP_NAVBAR_HEIGHT } from 'constants/constants';
+import { useSetAtom } from 'jotai';
+import { userAtom } from 'atoms/user';
+import { RESET } from 'jotai/utils';
 
 const MainLayout = ({ children }: { children: React.ReactNode }) => {
   const isMobile = useMediaQuery();
   const router = useRouter();
 
+  const setUser = useSetAtom(userAtom);
+
   const handleLogout = async () => {
     try {
       await signOut(auth);
+      setUser(RESET);
       router.push('/login');
     } catch (error) {
       toast.error('문제가 발생했습니다.');
@@ -31,23 +38,29 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
       <StrokeBox
         $step={2}
         $thick={1.2}
-        // $bdColor="mint"
-        // $bgColor="black"
+        $bdColor="black0"
+        $bgColor="lightGray"
         style={{
           position: 'relative',
-          width: isMobile ? '100%' : '800px',
+          width: isMobile ? '100%' : '850px',
           height: isMobile ? 'calc(100vh - 2rem)' : '100%',
           maxHeight: isMobile ? '100%' : '550px',
         }}
       >
         <TopNavBar>
-          <div style={{ letterSpacing: '2px', fontSize: '1.3rem' }}>
+          <div
+            style={{
+              letterSpacing: '2px',
+              fontSize: '1.3rem',
+              color: '#999',
+            }}
+          >
             {dayjs().format('YYYY/MM/DD (ddd)')}
           </div>
           <div>
             <Button
               size="sm"
-              color="midGray"
+              color="black7"
               onClick={handleLogout}
               style={{ padding: '0.2rem 0.4rem' }}
             >
@@ -77,8 +90,8 @@ const Container = styled.div`
   flex-direction: column;
   padding: 1rem;
 
-  background-color: #369128;
-  ${bg.slash2}
+  background-color: ${({ theme }) => theme.colors.black0};
+  ${bg.slash3}
 `;
 
 const TopNavBar = styled.div`
@@ -94,7 +107,7 @@ const TopNavBar = styled.div`
   padding: 0 1rem;
 
   ${({ theme }) => {
-    const bg = '#2e2e2e';
+    const bg = theme.colors.black3;
 
     return css`
       color: ${theme.colors.white};
@@ -142,4 +155,6 @@ const ChildrenWrapper = styled.div`
   width: 100%;
   height: 100%;
   overflow-y: auto;
+  background-color: ${({ theme }) => theme.colors.black1};
+  color: #fff;
 `;

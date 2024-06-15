@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 import SelectIcon from 'components/organisms/login/SelectIcon';
-import EnterPinCode from 'components/organisms/login/EnterPinCode';
 import { TransitionGroup, Transition } from 'react-transition-group';
 import EnterMemberInfo from 'components/organisms/login/EnterMemberInfo';
 import { v4 as uuidv4 } from 'uuid';

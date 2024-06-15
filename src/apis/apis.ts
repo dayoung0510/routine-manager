@@ -6,14 +6,22 @@ import {
   getDocs,
   query,
   where,
-  FieldValue,
+  addDoc,
   updateDoc,
+  serverTimestamp,
 } from 'firebase/firestore';
+import { getAuth, updateProfile } from 'firebase/auth';
 
 export type UserType = {
   id: string;
   name: string;
   avatar: string;
+};
+
+export type TaskType = {
+  category: string;
+  content: string;
+  userId: string;
 };
 
 /* 모든 유저목록 가져오기 */
@@ -63,4 +71,19 @@ export const postUserPassword = async ({
 }) => {
   const docRef = doc(db, 'passwords', id);
   await updateDoc(docRef, { value });
+};
+
+/* create task */
+export const postTask = async ({ userId, content, category }: TaskType) => {
+  try {
+    const docRef = addDoc(collection(db, 'tasks'), {
+      userId,
+      content,
+      category,
+      createdAt: serverTimestamp(),
+      status: false,
+    });
+  } catch (e) {
+    console.log('err', e);
+  }
 };

@@ -1,6 +1,9 @@
+import Image from 'next/image';
 import styled from 'styled-components';
 import Link from 'next/link';
 import { useMediaQuery } from 'hooks/useMediaQuery';
+import { useAtomValue } from 'jotai';
+import { userAtom } from 'atoms/user';
 
 const menus = [
   { index: 0, title: 'TODO', link: '/' },
@@ -12,8 +15,14 @@ const menus = [
 const SideBar = () => {
   const isMobile = useMediaQuery();
 
+  const user = useAtomValue(userAtom);
+
   return (
     <Container>
+      [ {user.name} ]
+      {user.avatar && (
+        <Image src={user.avatar} width={30} height={30} alt="avatar" />
+      )}
       {menus.map((menu) => (
         <Link key={menu.index} href={menu.link}>
           <Item>{menu.title}</Item>
@@ -32,7 +41,10 @@ const Container = styled.div`
   width: 15rem;
   height: 100%;
   font-size: 1.5rem;
-  border-right: 1px solid ${({ theme }) => theme.colors.black};
+  border-right: 4px solid ${({ theme }) => theme.colors.lightGray};
+
+  background-color: ${({ theme }) => theme.colors.black1};
+  color: #fff;
 
   ${({ theme }) => theme.device.mobile} {
     width: auto;

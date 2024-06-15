@@ -37,7 +37,11 @@ const EnterMemberInfo = ({ id, handleReset }: Props) => {
 
       {userInfo?.name ? (
         // 기존회원 pin code 입력
-        <EnterPinCode id={id} name={userInfo.name} />
+        <EnterPinCode
+          id={id}
+          name={userInfo.name}
+          avatar={userInfo?.avatar ?? ''}
+        />
       ) : (
         // 새회원 닉네임 입력
         <>

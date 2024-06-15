@@ -23,4 +23,3 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 // firestore export
 export { db, auth };
-

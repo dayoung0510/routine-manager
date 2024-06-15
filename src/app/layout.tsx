@@ -21,7 +21,7 @@ export default function RootLayout({
   const pathname = usePathname();
 
   useEffect(() => {
-    document.title = 'Routine Maker';
+    document.title = 'Godssaeng Maker';
   }, []);
 
   const router = useRouter();
