@@ -76,7 +76,7 @@ export const postUserPassword = async ({
 /* create task */
 export const postTask = async ({ userId, content, category }: TaskType) => {
   try {
-    const docRef = addDoc(collection(db, 'tasks'), {
+    addDoc(collection(db, 'tasks'), {
       userId,
       content,
       category,

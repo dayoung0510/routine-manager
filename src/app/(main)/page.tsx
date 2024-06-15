@@ -12,18 +12,23 @@ const Main = () => {
 
   const { mutate } = usePostTask();
 
+  const handleSubmit = () => {
+    if (user.id) {
+      mutate(
+        { userId: user.id, content, category: '0' },
+        {
+          onSuccess: () => {
+            setContent('');
+          },
+        },
+      );
+    }
+  };
+
   return (
     <>
-      <input onChange={(e) => setContent(e.target.value)} />
-      <Button
-        onClick={() => {
-          if (user.id) {
-            mutate({ userId: user.id, content, category: '0' });
-          }
-        }}
-      >
-        CONFIRM
-      </Button>
+      <input value={content} onChange={(e) => setContent(e.target.value)} />
+      <Button onClick={handleSubmit}>CONFIRM</Button>
     </>
   );
 };
