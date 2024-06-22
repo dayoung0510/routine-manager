@@ -23,31 +23,38 @@ const sizeStyles: Record<SizeType, ReturnType<typeof css>> = {
 
 const boxShadowStyles: Record<SizeType, string> = {
   sm: '0.25rem',
-  md: '0.5rem',
-  lg: '0.75rem',
+  md: '0.35rem',
+  lg: '0.5rem',
 };
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
-  color?: ColorType;
+
   size?: SizeType;
   isFull?: boolean;
+
+  /* 개별컬러설정이 colorSet보다 후적용 */
+  color?: ColorType;
+  subColor?: ColorType;
 }
 
 const Button = ({
   size = 'md',
-  color = 'mint',
   isFull = false,
   children,
+  color = 'mint',
+  subColor,
   ...props
 }: ButtonProps) => {
-  const subColor = darkenColor(theme.colors[color], 40);
+  const sub = subColor
+    ? theme.colors[subColor]
+    : darkenColor(theme.colors[color], 40);
   return (
     <StyledButton
       {...props}
       $size={size}
       $color={color}
-      $subColor={subColor}
+      $subColor={sub}
       $isFull={isFull}
     >
       {children}
@@ -80,4 +87,19 @@ const StyledButton = styled.button<{
 `};
 
   ${(props) => sizeStyles[props.$size]};
+
+  &:disabled {
+    color: ${({ theme }) => theme.colors.black7};
+    background-color: ${({ theme }) => theme.colors.black9};
+
+    box-shadow: ${(props) => {
+      const disabledColor = theme.colors.black7;
+      return `
+        -${boxShadowStyles[props.$size]} 0 0 0 ${disabledColor},
+        ${boxShadowStyles[props.$size]} 0 0 0 ${disabledColor},
+        0 -${boxShadowStyles[props.$size]} 0 0 ${disabledColor},
+        0 ${boxShadowStyles[props.$size]} 0 0 ${disabledColor}
+      `;
+    }};
+  }
 `;

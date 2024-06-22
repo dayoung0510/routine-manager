@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import Image from 'next/image';
 import styled, { css } from 'styled-components';
 import StrokeBox from 'components/atoms/StrokeBox';
 import { useMediaQuery } from 'hooks/useMediaQuery';
@@ -13,15 +13,15 @@ import { useRouter } from 'next/navigation';
 import Button from 'components/atoms/Button';
 import SideBar from 'components/molecules/SideBar';
 import { TOP_NAVBAR_HEIGHT } from 'constants/constants';
-import { useSetAtom } from 'jotai';
 import { userAtom } from 'atoms/user';
 import { RESET } from 'jotai/utils';
+import { useAtom } from 'jotai';
 
 const MainLayout = ({ children }: { children: React.ReactNode }) => {
   const isMobile = useMediaQuery();
   const router = useRouter();
 
-  const setUser = useSetAtom(userAtom);
+  const [user, setUser] = useAtom(userAtom);
 
   const handleLogout = async () => {
     try {
@@ -48,19 +48,20 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
         }}
       >
         <TopNavBar>
-          <div
-            style={{
-              letterSpacing: '2px',
-              fontSize: '1.3rem',
-              color: '#999',
-            }}
-          >
-            {dayjs().format('YYYY/MM/DD (ddd)')}
-          </div>
+          <ContentFlex>
+            <div>
+              {user.avatar && (
+                <Image src={user.avatar} width={25} height={25} alt="avatar" />
+              )}
+            </div>
+            <div>{user.name}</div>
+            <div className="date">{dayjs().format('YYYY/MM/DD (ddd)')}</div>
+          </ContentFlex>
           <div>
             <Button
               size="sm"
-              color="black7"
+              color="midGray"
+              subColor="black0"
               onClick={handleLogout}
               style={{ padding: '0.2rem 0.4rem' }}
             >
@@ -107,7 +108,7 @@ const TopNavBar = styled.div`
   padding: 0 1rem;
 
   ${({ theme }) => {
-    const bg = theme.colors.black3;
+    const bg = theme.colors.black2;
 
     return css`
       color: ${theme.colors.white};
@@ -155,6 +156,24 @@ const ChildrenWrapper = styled.div`
   width: 100%;
   height: 100%;
   overflow-y: auto;
-  background-color: ${({ theme }) => theme.colors.black1};
-  color: #fff;
+  background-color: ${({ theme }) => theme.colors.lightGray};
+  color: black;
+`;
+
+const ContentFlex = styled.div`
+  display: flex;
+  align-items: center;
+  column-gap: 12px;
+  color: ${({ theme }) => theme.colors.midGray};
+  letter-spacing: 2px;
+  font-size: 1.3rem;
+
+  .date {
+    color: ${({ theme }) => theme.colors.black7};
+  }
+
+  ${({ theme }) => theme.device.mobile} {
+    letter-spacing: 1px;
+    font-size: 1.2rem;
+  }
 `;

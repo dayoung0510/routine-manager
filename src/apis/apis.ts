@@ -21,6 +21,7 @@ export type UserType = {
 export type TaskType = {
   category: string;
   content: string;
+  point: number;
   userId: string;
 };
 
@@ -45,11 +46,11 @@ export const putUserName = async ({
 
 /* 특정회원id에 기존 설정한 비번 존재 여부 */
 export const getUserPasswordExist = async (id: string) => {
-  const q = query(
-    collection(db, 'passwords'),
-    where('id', '==', id),
-    where('value', '!=', ''),
-  );
+  // const q = query(
+  //   collection(db, 'passwords'),
+  //   where('id', '==', id),
+  //   where('value', '!=', ''),
+  // );
 
   const docRef = doc(db, 'passwords', id);
   const docSnap = await getDoc(docRef);
@@ -74,15 +75,33 @@ export const postUserPassword = async ({
 };
 
 /* create task */
-export const postTask = async ({ userId, content, category }: TaskType) => {
+export const postTask = async ({
+  userId,
+  content,
+  category,
+  point,
+}: TaskType) => {
   try {
-    addDoc(collection(db, 'tasks'), {
-      userId,
+    addDoc(collection(db, 'users', userId, 'tasks'), {
       content,
       category,
+      point,
       createdAt: serverTimestamp(),
-      status: false,
     });
+  } catch (e) {
+    console.log('err', e);
+  }
+};
+
+/* 특정아이디의 todo list 가져오기 */
+export const getUserIdTasks = async (userId: string) => {
+  try {
+    const docRef = doc(db, 'users', userId);
+    const docSnap = await getDocs(collection(docRef, 'tasks'));
+
+    const data = docSnap.docs.map((doc) => doc.data());
+
+    return data as TaskType[];
   } catch (e) {
     console.log('err', e);
   }
