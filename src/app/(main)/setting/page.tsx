@@ -1,14 +1,15 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Button from 'components/atoms/Button';
 import { useAtomValue } from 'jotai';
 import { userAtom } from 'atoms/user';
-import { usePostTask, useGetUserIdTasks } from 'hooks/tasks';
+import { usePostTask, useGetUserIdTasks, useUpdateTask } from 'hooks/tasks';
 import { useForm, useFieldArray, Controller } from 'react-hook-form';
 import { TaskType } from 'apis/apis';
 import { MAX_DAILY_POINT } from 'constants/constants';
+import { isEqual, differenceWith } from 'lodash';
 
 type FormType = { tasks: Omit<TaskType, 'userId'>[] };
 
@@ -16,31 +17,55 @@ const Setting = () => {
   const [point, setPoint] = useState(0);
   const user = useAtomValue(userAtom);
 
-  const { control, handleSubmit } = useForm<FormType>({
-    defaultValues: { tasks: [{ category: '', content: '', point: 1 }] },
+  const { control, handleSubmit, reset } = useForm<FormType>({
+    defaultValues: {
+      tasks: [{ category: '', content: '', point: 1, createdAt: undefined }],
+    },
   });
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'tasks',
   });
 
-  const { mutate } = usePostTask();
+  const { mutate: createTask } = usePostTask();
+  const { mutate: updateTask } = useUpdateTask();
+  const { data, isPending } = useGetUserIdTasks(user.id);
 
-  const { data } = useGetUserIdTasks(user.id);
-  console.log('...', data);
+  useEffect(() => {
+    if (data && data.length > 0) {
+      reset({ tasks: data });
+    }
+  }, [data, reset]);
 
   /* save */
   const onSubmit = (formData: FormType) => {
     if (!user.id) return;
 
-    formData.tasks.forEach((task) => {
-      mutate({
-        userId: user.id!,
-        content: task.content,
-        category: '',
-        point: task.point,
+    if (data) {
+      const newValues = differenceWith(formData.tasks, data, isEqual);
+      newValues.forEach((value) => {
+        // 기존항목 수정일 땐 update
+        if (value.taskId) {
+          updateTask({
+            taskId: value.taskId,
+            userId: user.id!,
+            content: value.content,
+            category: '',
+            point: value.point,
+          });
+        }
+
+        // 새로운 항목일 땐 create
+        else {
+          createTask({
+            userId: user.id!,
+            content: value.content,
+            category: '',
+            point: value.point,
+          });
+        }
       });
-    });
+    }
   };
 
   /* plus button click */
@@ -70,44 +95,46 @@ const Setting = () => {
           </PlusButtonWrapper>
 
           <RowsContainer>
-            {fields.map((field, index) => {
-              return (
-                <Row key={field.id}>
-                  <Controller
-                    key={field.id}
-                    name={`tasks.${index}.content`}
-                    control={control}
-                    render={({ field }) => {
-                      return (
-                        <Input
-                          placeholder={`daily task ${index + 1}`}
-                          {...field}
-                        />
-                      );
-                    }}
-                  />
-                  <Controller
-                    name={`tasks.${index}.point`}
-                    control={control}
-                    render={({ field }) => {
-                      return <Input placeholder="point" {...field} />;
-                    }}
-                  />
-                  <Button
-                    size="sm"
-                    color="red"
-                    disabled={fields.length < 2}
-                    onClick={() => {
-                      if (fields.length > 1) {
-                        remove(index);
-                      }
-                    }}
-                  >
-                    -
-                  </Button>
-                </Row>
-              );
-            })}
+            {isPending
+              ? 'loading...'
+              : fields.map((field, index) => {
+                  return (
+                    <Row key={field.id}>
+                      <Controller
+                        key={field.id}
+                        name={`tasks.${index}.content`}
+                        control={control}
+                        render={({ field }) => {
+                          return (
+                            <Input
+                              placeholder={`daily task ${index + 1}`}
+                              {...field}
+                            />
+                          );
+                        }}
+                      />
+                      <Controller
+                        name={`tasks.${index}.point`}
+                        control={control}
+                        render={({ field }) => {
+                          return <Input placeholder="point" {...field} />;
+                        }}
+                      />
+                      <Button
+                        size="sm"
+                        color="red"
+                        disabled={fields.length < 2}
+                        onClick={() => {
+                          if (fields.length > 1) {
+                            remove(index);
+                          }
+                        }}
+                      >
+                        -
+                      </Button>
+                    </Row>
+                  );
+                })}
           </RowsContainer>
         </div>
 

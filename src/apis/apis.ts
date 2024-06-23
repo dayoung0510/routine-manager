@@ -9,7 +9,10 @@ import {
   addDoc,
   updateDoc,
   serverTimestamp,
+  setDoc,
 } from 'firebase/firestore';
+import dayjs from 'dayjs';
+import { v4 as uuidv4 } from 'uuid';
 import { getAuth, updateProfile } from 'firebase/auth';
 
 export type UserType = {
@@ -23,6 +26,8 @@ export type TaskType = {
   content: string;
   point: number;
   userId: string;
+  createdAt?: string;
+  taskId?: string;
 };
 
 /* 모든 유저목록 가져오기 */
@@ -74,7 +79,7 @@ export const postUserPassword = async ({
   await updateDoc(docRef, { value });
 };
 
-/* create task */
+/* create user's task */
 export const postTask = async ({
   userId,
   content,
@@ -82,14 +87,37 @@ export const postTask = async ({
   point,
 }: TaskType) => {
   try {
-    addDoc(collection(db, 'users', userId, 'tasks'), {
+    const ref = collection(db, 'users', userId, 'tasks');
+
+    addDoc(ref, {
       content,
       category,
       point,
-      createdAt: serverTimestamp(),
+      createdAt: dayjs().format('YYYY-MM-DD HH:mm'),
+    }).then((res) => {
+      updateDoc(doc(db, 'users', userId, 'tasks', res.id), { taskId: res.id });
     });
   } catch (e) {
     console.log('err', e);
+  }
+};
+
+/* update user's task */
+export const updateTask = async ({
+  userId,
+  taskId,
+  content,
+  category,
+  point,
+}: TaskType) => {
+  if (taskId) {
+    const docRef = doc(db, 'users', userId, 'tasks', taskId);
+    await updateDoc(docRef, {
+      content,
+      category,
+      point,
+      createdAt: dayjs().format('YYYY-MM-DD HH:mm'),
+    });
   }
 };
 
