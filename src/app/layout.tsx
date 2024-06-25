@@ -78,14 +78,14 @@ const StyledContainer = styled(ToastContainer)`
   }
   .Toastify__toast {
     border-radius: 0;
-    background-color: ${({ theme }) => theme.colors.lilac};
-    ${getBorderStyle(2, 1, 'black0', 'lilac')}
+    background-color: ${({ theme }) => theme.colors.lightGray};
+    ${getBorderStyle(2, 1, 'black0', 'red')}
   }
   .Toastify__toast-body {
     font-family: 'Dung', sans-serif;
-    color: #000;
+    color: ${({ theme }) => theme.colors.red};
   }
   .Toastify__progress-bar {
-    background: ${({ theme }) => theme.colors.purple};
+    background: ${({ theme }) => theme.colors.red};
   }
 `;

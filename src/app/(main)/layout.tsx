@@ -29,7 +29,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
       setUser(RESET);
       router.push('/login');
     } catch (error) {
-      toast.error('문제가 발생했습니다.');
+      toast('문제가 발생했습니다.');
     }
   };
 

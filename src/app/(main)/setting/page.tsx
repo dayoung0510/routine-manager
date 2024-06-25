@@ -6,12 +6,11 @@ import Button from 'components/atoms/Button';
 import { useAtomValue } from 'jotai';
 import { userAtom } from 'atoms/user';
 import { usePostTask, useGetUserIdTasks, useUpdateTask } from 'hooks/tasks';
-import { useForm, useFieldArray, Controller } from 'react-hook-form';
+import { useForm, useFieldArray, Controller, useWatch } from 'react-hook-form';
 import { TaskType } from 'apis/apis';
 import { MAX_DAILY_POINT } from 'constants/constants';
 import { isEqual, differenceWith } from 'lodash';
 import { toast } from 'react-toastify';
-import { ToastContainer } from 'react-toastify';
 
 type FormType = { tasks: Omit<TaskType, 'userId'>[] };
 
@@ -19,9 +18,16 @@ const Setting = () => {
   const [point, setPoint] = useState(0);
   const user = useAtomValue(userAtom);
 
-  const { control, handleSubmit, reset } = useForm<FormType>({
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { isDirty, isValid },
+  } = useForm<FormType>({
     defaultValues: {
-      tasks: [{ category: '', content: '', point: 1, createdAt: undefined }],
+      tasks: [
+        { category: '', content: '', point: undefined, createdAt: undefined },
+      ],
     },
   });
   const { fields, append, remove } = useFieldArray({
@@ -39,9 +45,25 @@ const Setting = () => {
     }
   }, [data, reset]);
 
+  const points = useWatch({ control, name: 'tasks', defaultValue: [] });
+  const totalPoint = points?.reduce((acc, cur) => {
+    return acc + Number(cur.point);
+  }, 0);
+
+  useEffect(() => {
+    if (!isPending) {
+      setPoint(totalPoint);
+    }
+  }, [totalPoint, isPending]);
+
   /* save */
   const onSubmit = (formData: FormType) => {
     if (!user.id) return;
+
+    if (totalPoint !== 10) {
+      toast('Total points must be 10!');
+      return;
+    }
 
     if (data) {
       const newValues = differenceWith(formData.tasks, data, isEqual);
@@ -56,7 +78,6 @@ const Setting = () => {
             point: value.point,
           });
         }
-
         // 새로운 항목일 땐 create
         else {
           createTask({
@@ -91,9 +112,11 @@ const Setting = () => {
             >
               ADD
             </Button>
-            <div>
-              POINT: {point}/{MAX_DAILY_POINT}
-            </div>
+            <PointWrapper $isError={point !== 10}>
+              <span className="title">POINT</span>
+              <span className="current">{point}</span>/
+              <span>{MAX_DAILY_POINT}</span>
+            </PointWrapper>
           </PlusButtonWrapper>
 
           <RowsContainer>
@@ -106,6 +129,7 @@ const Setting = () => {
                         key={field.id}
                         name={`tasks.${index}.content`}
                         control={control}
+                        rules={{ required: true }}
                         render={({ field }) => {
                           return (
                             <Input
@@ -118,8 +142,11 @@ const Setting = () => {
                       <Controller
                         name={`tasks.${index}.point`}
                         control={control}
+                        rules={{ required: true, min: 1, max: 10 }}
                         render={({ field }) => {
-                          return <Input placeholder="point" {...field} />;
+                          return (
+                            <Input placeholder="point(1 to 10)" {...field} />
+                          );
                         }}
                       />
                       <Button
@@ -140,14 +167,9 @@ const Setting = () => {
           </RowsContainer>
         </div>
 
-        <Button type="submit">CONFIRM</Button>
-        <button
-          onClick={() => {
-            toast('!!!!');
-          }}
-        >
-          test
-        </button>
+        <Button type="submit" disabled={!isDirty || !isValid}>
+          CONFIRM
+        </Button>
       </Container>
     </form>
   );
@@ -195,4 +217,17 @@ const Row = styled.div`
   display: flex;
   justify-content: space-between;
   column-gap: 1rem;
+`;
+
+const PointWrapper = styled.div<{ $isError: boolean }>`
+  color: ${({ theme }) => theme.colors.black3};
+  display: flex;
+  column-gap: 4px;
+
+  > .title {
+    color: ${(props) => props.$isError && props.theme.colors.black9};
+  }
+  > .current {
+    color: ${(props) => props.$isError && props.theme.colors.red};
+  }
 `;
