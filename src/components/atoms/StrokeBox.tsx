@@ -18,7 +18,7 @@ type Props = {
   style?: CSSProperties;
 };
 
-const getBorderStyle = (
+export const getBorderStyle = (
   step: number,
   thick: number,
   bdColor: ColorType,

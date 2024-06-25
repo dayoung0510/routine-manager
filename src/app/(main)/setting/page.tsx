@@ -10,6 +10,8 @@ import { useForm, useFieldArray, Controller } from 'react-hook-form';
 import { TaskType } from 'apis/apis';
 import { MAX_DAILY_POINT } from 'constants/constants';
 import { isEqual, differenceWith } from 'lodash';
+import { toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 
 type FormType = { tasks: Omit<TaskType, 'userId'>[] };
 
@@ -139,6 +141,13 @@ const Setting = () => {
         </div>
 
         <Button type="submit">CONFIRM</Button>
+        <button
+          onClick={() => {
+            toast('!!!!');
+          }}
+        >
+          test
+        </button>
       </Container>
     </form>
   );

@@ -11,6 +11,8 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ToastContainer } from 'react-toastify';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from 'apis/firebase';
+import { getBorderStyle } from 'components/atoms/StrokeBox';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function RootLayout({
   children,
@@ -48,13 +50,12 @@ export default function RootLayout({
             <GlobalStyle />
             <ThemeProvider theme={theme}>
               <Container>{children}</Container>
+              <StyledContainer
+                position="bottom-center"
+                autoClose={2000}
+                toastClassName={'custom'}
+              />
             </ThemeProvider>
-            <ToastContainer
-              position="bottom-center"
-              autoClose={2000}
-              theme="dark"
-              style={{ width: 'fit-content' }}
-            />
           </StyledComponentsRegistry>
         </QueryClientProvider>
       </body>
@@ -69,5 +70,22 @@ const Container = styled.div`
 
   ${({ theme }) => theme.device.mobile} {
     height: auto;
+  }
+`;
+
+const StyledContainer = styled(ToastContainer)`
+  &&&.Toastify__toast-container {
+  }
+  .Toastify__toast {
+    border-radius: 0;
+    background-color: ${({ theme }) => theme.colors.lilac};
+    ${getBorderStyle(2, 1, 'black0', 'lilac')}
+  }
+  .Toastify__toast-body {
+    font-family: 'Dung', sans-serif;
+    color: #000;
+  }
+  .Toastify__progress-bar {
+    background: ${({ theme }) => theme.colors.purple};
   }
 `;
