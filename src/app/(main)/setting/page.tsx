@@ -11,6 +11,7 @@ import { TaskType } from 'apis/apis';
 import { MAX_DAILY_POINT } from 'constants/constants';
 import { isEqual, differenceWith } from 'lodash';
 import { toast } from 'react-toastify';
+import ScorePanel from 'components/molecules/ScorePanel';
 
 type FormType = { tasks: Omit<TaskType, 'userId'>[] };
 
@@ -70,22 +71,28 @@ const Setting = () => {
       newValues.forEach((value) => {
         // 기존항목 수정일 땐 update
         if (value.taskId) {
-          updateTask({
-            taskId: value.taskId,
-            userId: user.id!,
-            content: value.content,
-            category: '',
-            point: value.point,
-          });
+          updateTask(
+            {
+              taskId: value.taskId,
+              userId: user.id!,
+              content: value.content,
+              category: '',
+              point: value.point,
+            },
+            { onSuccess: () => toast(`UPDATED`) },
+          );
         }
         // 새로운 항목일 땐 create
         else {
-          createTask({
-            userId: user.id!,
-            content: value.content,
-            category: '',
-            point: value.point,
-          });
+          createTask(
+            {
+              userId: user.id!,
+              content: value.content,
+              category: '',
+              point: value.point,
+            },
+            { onSuccess: () => toast(`SAVED`) },
+          );
         }
       });
     }
@@ -134,6 +141,7 @@ const Setting = () => {
                           return (
                             <Input
                               placeholder={`daily task ${index + 1}`}
+                              style={{ width: '70%' }}
                               {...field}
                             />
                           );
@@ -143,9 +151,12 @@ const Setting = () => {
                         name={`tasks.${index}.point`}
                         control={control}
                         rules={{ required: true, min: 1, max: 10 }}
-                        render={({ field }) => {
+                        render={({ field: { value, onChange } }) => {
                           return (
-                            <Input placeholder="point(1 to 10)" {...field} />
+                            <ScorePanel
+                              score={value as number}
+                              handleScore={(v) => onChange(v)}
+                            />
                           );
                         }}
                       />
@@ -159,7 +170,7 @@ const Setting = () => {
                           }
                         }}
                       >
-                        -
+                        DEL
                       </Button>
                     </Row>
                   );
@@ -205,7 +216,7 @@ const Input = styled.input`
   font-size: 1.2rem;
   background: none;
   border-bottom: 4px solid ${({ theme }) => theme.colors.black2};
-  flex: 1;
+  /* flex: 1; */
 
   &::placeholder {
     color: ${({ theme }) => theme.colors.black9};

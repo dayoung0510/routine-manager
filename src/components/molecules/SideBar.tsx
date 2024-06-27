@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 import styled from 'styled-components';
 import Link from 'next/link';
 import { useMediaQuery } from 'hooks/useMediaQuery';
@@ -12,14 +13,22 @@ const menus = [
 
 const SideBar = () => {
   const isMobile = useMediaQuery();
+  const pathname = usePathname()?.slice(1);
 
   return (
     <Container>
-      {menus.map((menu) => (
-        <Link key={menu.index} href={menu.link}>
-          <Item>{menu.title}</Item>
-        </Link>
-      ))}
+      {menus.map((menu) => {
+        const lowerCase = menu.title.toLowerCase();
+
+        const current =
+          (menu.title === 'TODO' && pathname === '') || lowerCase === pathname;
+
+        return (
+          <Link key={menu.index} href={menu.link}>
+            <Item $current={current}>{menu.title}</Item>
+          </Link>
+        );
+      })}
     </Container>
   );
 };
@@ -29,14 +38,17 @@ export default SideBar;
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  row-gap: 1rem;
-  width: 15rem;
+  row-gap: 1.5rem;
+  width: 14rem;
   height: 100%;
   font-size: 1.5rem;
   border-right: 1px solid ${({ theme }) => theme.colors.black2};
+  background-color: ${({ theme }) => theme.colors.black2};
+  color: ${({ theme }) => theme.colors.white};
+  padding: 1rem;
 
-  background-color: ${({ theme }) => theme.colors.lightGray};
-  color: ${({ theme }) => theme.colors.darkGray};
+  /* background-color: ${({ theme }) => theme.colors.lightGray}; */
+  /* color: ${({ theme }) => theme.colors.darkGray}; */
 
   ${({ theme }) => theme.device.mobile} {
     width: auto;
@@ -50,4 +62,7 @@ const Container = styled.div`
   }
 `;
 
-const Item = styled.div``;
+const Item = styled.div<{ $current: boolean }>`
+  color: ${(props) =>
+    props.$current ? props.theme.colors.white : props.theme.colors.black7};
+`;
