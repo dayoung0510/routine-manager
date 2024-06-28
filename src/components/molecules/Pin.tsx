@@ -89,7 +89,7 @@ const Pin = ({ onChange, isInit, error, loading, underlineColor }: Props) => {
           return (
             <StyledInput key={uuidv4()} $underlineColor={underlineColor}>
               <input
-                type="number"
+                type="password"
                 maxLength={2}
                 value={value}
                 onKeyDown={(e) => {
@@ -158,6 +158,12 @@ const StyledInput = styled.div<{ $underlineColor?: string }>`
     outline: 0;
     border: 0;
     color: ${({ theme }) => theme.colors.white};
+
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
 
     ${({ theme }) =>
       theme.device.mobile &&
