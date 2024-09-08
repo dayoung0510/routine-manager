@@ -5,18 +5,27 @@ import styled from 'styled-components';
 import Button from 'components/atoms/Button';
 import { useAtomValue } from 'jotai';
 import { userAtom } from 'atoms/user';
-import { usePostTask, useGetUserIdTasks, useUpdateTask } from 'hooks/tasks';
+import {
+  usePostTask,
+  useGetUserIdActiveTasks,
+  useUpdateTask,
+  useInactiveTask,
+} from 'hooks/tasks';
 import { useForm, useFieldArray, Controller, useWatch } from 'react-hook-form';
 import { TaskType } from 'apis/apis';
 import { MAX_DAILY_POINT } from 'constants/constants';
 import { isEqual, differenceWith } from 'lodash';
 import { toast } from 'react-toastify';
 import ScorePanel from 'components/molecules/ScorePanel';
+import Flex from 'components/atoms/Flex';
+import { useRouter } from 'next/navigation';
 
 type FormType = { tasks: Omit<TaskType, 'userId'>[] };
 
 const Setting = () => {
   const [point, setPoint] = useState(0);
+  const router = useRouter();
+
   const user = useAtomValue(userAtom);
 
   const {
@@ -26,9 +35,7 @@ const Setting = () => {
     formState: { isDirty, isValid },
   } = useForm<FormType>({
     defaultValues: {
-      tasks: [
-        { category: '', content: '', point: undefined, createdAt: undefined },
-      ],
+      tasks: [{ category: '', content: '', point: 1, createdAt: undefined }],
     },
   });
   const { fields, append, remove } = useFieldArray({
@@ -38,7 +45,9 @@ const Setting = () => {
 
   const { mutate: createTask } = usePostTask();
   const { mutate: updateTask } = useUpdateTask();
-  const { data, isPending } = useGetUserIdTasks(user.id);
+  const { mutate: inactiveTask } = useInactiveTask();
+
+  const { data, isPending } = useGetUserIdActiveTasks(user.id);
 
   useEffect(() => {
     if (data && data.length > 0) {
@@ -67,6 +76,19 @@ const Setting = () => {
     }
 
     if (data) {
+      // 비활성화시킬 기존 task의 id
+      const formDataIds = formData.tasks.map((i) => i.taskId);
+      const willBeInactive = data.filter(
+        (item) => !formDataIds.includes(item.taskId),
+      );
+
+      // task 비활성화
+      willBeInactive.forEach((i) => {
+        if (user.id && i.taskId) {
+          inactiveTask({ userId: user.id, taskId: i.taskId });
+        }
+      });
+
       const newValues = differenceWith(formData.tasks, data, isEqual);
       newValues.forEach((value) => {
         // 기존항목 수정일 땐 update
@@ -78,8 +100,13 @@ const Setting = () => {
               content: value.content,
               category: '',
               point: value.point,
+              isActive: true,
             },
-            { onSuccess: () => toast(`UPDATED`) },
+            {
+              onSuccess: () => {
+                toast(`UPDATED SUCCESS`);
+              },
+            },
           );
         }
         // 새로운 항목일 땐 create
@@ -90,8 +117,13 @@ const Setting = () => {
               content: value.content,
               category: '',
               point: value.point,
+              isActive: true,
             },
-            { onSuccess: () => toast(`SAVED`) },
+            {
+              onSuccess: () => {
+                toast(`SAVED SUCCESS`);
+              },
+            },
           );
         }
       });
@@ -101,7 +133,7 @@ const Setting = () => {
   /* plus button click */
   const handleClickAdd = () => {
     if (user.id) {
-      append({ category: '', content: '', point: 1 });
+      append({ category: '', content: '', point: 1, isActive: true });
     }
   };
 
@@ -110,15 +142,26 @@ const Setting = () => {
       <Container>
         <div style={{ width: '100%' }}>
           <PlusButtonWrapper>
-            <Button
-              type="button"
-              size="sm"
-              color="blue"
-              disabled={fields.length > 9}
-              onClick={handleClickAdd}
-            >
-              ADD
-            </Button>
+            <Flex $gap={{ column: 16 }}>
+              <Button
+                type="button"
+                size="sm"
+                color="midGray"
+                disabled={fields.length > 9}
+                onClick={() => router.back()}
+              >
+                BACK
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                color="blue"
+                disabled={fields.length > 9}
+                onClick={handleClickAdd}
+              >
+                ADD
+              </Button>
+            </Flex>
             <PointWrapper $isError={point !== 10}>
               <span className="title">POINT</span>
               <span className="current">{point}</span>/
@@ -211,11 +254,11 @@ const PlusButtonWrapper = styled.div`
 `;
 
 const Input = styled.input`
-  padding: 0.25rem 0.5rem;
+  padding: 0.5rem 0.25rem;
   outline: 0;
   font-size: 1.2rem;
   background: none;
-  border-bottom: 4px solid ${({ theme }) => theme.colors.black2};
+  border-bottom: 2px solid ${({ theme }) => theme.colors.black3};
   /* flex: 1; */
 
   &::placeholder {
@@ -234,6 +277,11 @@ const PointWrapper = styled.div<{ $isError: boolean }>`
   color: ${({ theme }) => theme.colors.black3};
   display: flex;
   column-gap: 4px;
+  font-size: 1.5rem;
+
+  ${({ theme }) => theme.device.mobile} {
+    font-size: 1.2rem;
+  }
 
   > .title {
     color: ${(props) => props.$isError && props.theme.colors.black9};

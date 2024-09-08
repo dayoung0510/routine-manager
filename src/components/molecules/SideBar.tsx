@@ -5,11 +5,13 @@ import Link from 'next/link';
 import { useMediaQuery } from 'hooks/useMediaQuery';
 
 const menus = [
-  { index: 0, title: 'TODO', link: '/' },
-  { index: 1, title: 'DASHBOARD', link: 'dashboard' },
-  { index: 2, title: 'RANK', link: 'rank' },
-  { index: 3, title: 'SETTING', link: 'setting' },
+  { index: 0, title: 'MONTHLY', link: '/' },
+  { index: 1, title: 'DAILY', link: '/daily' },
+  { index: 2, title: 'DASHBOARD', link: '/dashboard' },
+  { index: 3, title: 'HISTORIES', link: '/histories' },
 ];
+
+const DEFAULT_PAGE = 'MONTHLY';
 
 const SideBar = () => {
   const isMobile = useMediaQuery();
@@ -21,7 +23,8 @@ const SideBar = () => {
         const lowerCase = menu.title.toLowerCase();
 
         const current =
-          (menu.title === 'TODO' && pathname === '') || lowerCase === pathname;
+          (menu.title === DEFAULT_PAGE && pathname === '') ||
+          lowerCase === pathname;
 
         return (
           <Link key={menu.index} href={menu.link}>
@@ -42,13 +45,11 @@ const Container = styled.div`
   width: 14rem;
   height: 100%;
   font-size: 1.5rem;
-  border-right: 1px solid ${({ theme }) => theme.colors.black2};
-  background-color: ${({ theme }) => theme.colors.black2};
-  color: ${({ theme }) => theme.colors.white};
+  border-right: 2px dashed ${({ theme }) => theme.colors.black5};
   padding: 1rem;
 
   /* background-color: ${({ theme }) => theme.colors.lightGray}; */
-  /* color: ${({ theme }) => theme.colors.darkGray}; */
+  color: ${({ theme }) => theme.colors.darkGray};
 
   ${({ theme }) => theme.device.mobile} {
     width: auto;
@@ -64,5 +65,5 @@ const Container = styled.div`
 
 const Item = styled.div<{ $current: boolean }>`
   color: ${(props) =>
-    props.$current ? props.theme.colors.white : props.theme.colors.black7};
+    props.$current ? props.theme.colors.black1 : props.theme.colors.black9};
 `;

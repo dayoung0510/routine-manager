@@ -10,6 +10,7 @@ import {
   updateDoc,
   serverTimestamp,
   setDoc,
+  deleteDoc,
 } from 'firebase/firestore';
 import dayjs from 'dayjs';
 import { v4 as uuidv4 } from 'uuid';
@@ -28,6 +29,7 @@ export type TaskType = {
   userId: string;
   createdAt?: string;
   taskId?: string;
+  isActive: boolean;
 };
 
 /* 모든 유저목록 가져오기 */
@@ -85,6 +87,7 @@ export const postTask = async ({
   content,
   category,
   point,
+  isActive,
 }: TaskType) => {
   try {
     const ref = collection(db, 'users', userId, 'tasks');
@@ -94,6 +97,7 @@ export const postTask = async ({
       category,
       point,
       createdAt: dayjs().format('YYYY-MM-DD HH:mm'),
+      isActive,
     }).then((res) => {
       updateDoc(doc(db, 'users', userId, 'tasks', res.id), { taskId: res.id });
     });
@@ -109,6 +113,7 @@ export const updateTask = async ({
   content,
   category,
   point,
+  isActive,
 }: TaskType) => {
   if (taskId) {
     const docRef = doc(db, 'users', userId, 'tasks', taskId);
@@ -117,12 +122,43 @@ export const updateTask = async ({
       category,
       point,
       createdAt: dayjs().format('YYYY-MM-DD HH:mm'),
+      isActive,
     });
   }
 };
 
-/* 특정아이디의 todo list 가져오기 */
-export const getUserIdTasks = async (userId: string) => {
+/* user's task 비활성화 */
+export const inactiveTask = async ({
+  taskId,
+  userId,
+}: {
+  taskId: string;
+  userId: string;
+}) => {
+  if (taskId) {
+    const docRef = doc(db, 'users', userId, 'tasks', taskId);
+    await updateDoc(docRef, {
+      isActive: false,
+    });
+  }
+};
+
+/* user's task DB에서 영구삭제 */
+export const deleteTask = async ({
+  taskId,
+  userId,
+}: {
+  taskId: string;
+  userId: string;
+}) => {
+  if (taskId) {
+    const docRef = doc(db, 'users', userId, 'tasks', taskId);
+    await deleteDoc(docRef);
+  }
+};
+
+/* 특정아이디의 모든 todo list 가져오기(active + inactive) */
+export const getUserIdAllTasks = async (userId: string) => {
   try {
     const docRef = doc(db, 'users', userId);
     const docSnap = await getDocs(collection(docRef, 'tasks'));
@@ -130,6 +166,19 @@ export const getUserIdTasks = async (userId: string) => {
     const data = docSnap.docs.map((doc) => doc.data());
 
     return data as TaskType[];
+  } catch (e) {
+    console.log('err', e);
+  }
+};
+
+/* 특정아이디의 활성화된 todo list 가져오기(active + inactive) */
+export const getUserIdActiveTasks = async (userId: string) => {
+  try {
+    const docRef = doc(db, 'users', userId);
+    const q = query(collection(docRef, 'tasks'), where('isActive', '==', true));
+    const querySnapshot = await getDocs(q);
+    const data = querySnapshot.docs.map((doc) => doc.data() as TaskType);
+    return data;
   } catch (e) {
     console.log('err', e);
   }

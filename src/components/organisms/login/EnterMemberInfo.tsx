@@ -48,7 +48,7 @@ const EnterMemberInfo = ({ id, handleReset }: Props) => {
           <Input
             onChange={(e) => setName(e.target.value)}
             placeholder="please enter a name."
-            maxLength={6}
+            maxLength={7}
           />
           <Button isFull color="mint" onClick={() => handleSubmitName(name)}>
             CONFIRM

@@ -10,11 +10,19 @@ type Props = {
   error?: string;
   loading?: boolean;
   underlineColor?: string;
+  fontColor?: string;
 };
 
 export const MAX_LENGTH = 4;
 
-const Pin = ({ onChange, isInit, error, loading, underlineColor }: Props) => {
+const Pin = ({
+  onChange,
+  isInit,
+  error,
+  loading,
+  underlineColor,
+  fontColor,
+}: Props) => {
   const [pin, setPin] = useState(new Array(MAX_LENGTH).fill(''));
   const [focusIndex, setFocusIndex] = useState(0);
 
@@ -112,6 +120,7 @@ const Pin = ({ onChange, isInit, error, loading, underlineColor }: Props) => {
                     inputRefs.current[index] = el as HTMLInputElement;
                   }
                 }}
+                {...(fontColor && { style: { color: fontColor } })}
               />
             </StyledInput>
           );
@@ -132,7 +141,10 @@ const InputsWrapper = styled.div`
   column-gap: 1.5rem;
 `;
 
-const StyledInput = styled.div<{ $underlineColor?: string }>`
+const StyledInput = styled.div<{
+  $underlineColor?: string;
+  $fontColor?: string;
+}>`
   width: 48px;
   height: 48px;
   border: 0;

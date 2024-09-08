@@ -91,8 +91,8 @@ const Container = styled.div`
   flex-direction: column;
   padding: 1rem;
 
-  background-color: ${({ theme }) => theme.colors.black0};
-  ${bg.slash3}
+  background-color: ${({ theme }) => theme.colors.black7};
+  ${bg.slash5}
 `;
 
 const TopNavBar = styled.div`
@@ -152,12 +152,15 @@ const ContentContainer = styled.div`
 `;
 
 const ChildrenWrapper = styled.div`
-  padding: 1rem;
+  padding: 12px 12px 12px 16px;
   width: 100%;
   height: 100%;
   overflow-y: auto;
   background-color: ${({ theme }) => theme.colors.lightGray};
   color: black;
+
+  ${({ theme }) => theme.device.mobile} {
+  }
 `;
 
 const ContentFlex = styled.div`

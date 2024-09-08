@@ -61,6 +61,7 @@ const EnterPinCode = ({ id, name, avatar }: Props) => {
             <Pin
               onChange={(value) => setFirstPin(value)}
               underlineColor="#000"
+              fontColor="#000"
             />
           </FirstPinContainer>
         </Modal>

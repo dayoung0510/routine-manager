@@ -1,5 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { postTask, getUserIdTasks, updateTask } from 'apis/apis';
+import {
+  postTask,
+  getUserIdAllTasks,
+  updateTask,
+  inactiveTask,
+  deleteTask,
+  getUserIdActiveTasks,
+} from 'apis/apis';
 
 export const usePostTask = () => {
   const queryClient = useQueryClient();
@@ -12,12 +19,24 @@ export const usePostTask = () => {
   });
 };
 
-export const useGetUserIdTasks = (userId?: string) => {
+export const useGetUserIdAllTasks = (userId?: string) => {
   return useQuery({
-    queryKey: ['tasks', userId],
+    queryKey: ['tasks'],
     queryFn: () => {
       if (userId) {
-        return getUserIdTasks(userId);
+        return getUserIdAllTasks(userId);
+      }
+    },
+    enabled: !!userId,
+  });
+};
+
+export const useGetUserIdActiveTasks = (userId?: string) => {
+  return useQuery({
+    queryKey: ['activeTasks'],
+    queryFn: () => {
+      if (userId) {
+        return getUserIdActiveTasks(userId);
       }
     },
     enabled: !!userId,
@@ -29,6 +48,28 @@ export const useUpdateTask = () => {
 
   return useMutation({
     mutationFn: updateTask,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tasks'] });
+    },
+  });
+};
+
+export const useInactiveTask = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: inactiveTask,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tasks'] });
+    },
+  });
+};
+
+export const useDeleteTask = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: deleteTask,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tasks'] });
     },

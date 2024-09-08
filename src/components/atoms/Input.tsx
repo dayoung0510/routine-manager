@@ -16,7 +16,7 @@ const StyledInput = styled.input`
   border: 0;
   background: none;
   border-bottom: 2px solid ${({ theme }) => theme.colors.mint};
-  color: ${({ theme }) => theme.colors.mint};
+  color: ${({ theme }) => theme.colors.white};
   font-size: 24px;
   padding: 0.5rem;
 `;
