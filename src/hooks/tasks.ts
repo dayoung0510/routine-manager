@@ -6,6 +6,7 @@ import {
   inactiveTask,
   deleteTask,
   getUserIdActiveTasks,
+  getCategories,
 } from 'apis/apis';
 
 export const usePostTask = () => {
@@ -74,4 +75,8 @@ export const useDeleteTask = () => {
       queryClient.invalidateQueries({ queryKey: ['tasks'] });
     },
   });
+};
+
+export const useGetCategories = () => {
+  return useQuery({ queryFn: getCategories, queryKey: ['categories'] });
 };

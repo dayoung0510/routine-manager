@@ -23,7 +23,7 @@ export default function RootLayout({
   const pathname = usePathname();
 
   useEffect(() => {
-    document.title = 'Godssaeng Maker';
+    document.title = '정신차려 이 각박한 세상 속에서';
   }, []);
 
   const router = useRouter();

@@ -24,7 +24,7 @@ const SideBar = () => {
 
         const current =
           (menu.title === DEFAULT_PAGE && pathname === '') ||
-          lowerCase === pathname;
+          pathname.includes(lowerCase);
 
         return (
           <Link key={menu.index} href={menu.link}>

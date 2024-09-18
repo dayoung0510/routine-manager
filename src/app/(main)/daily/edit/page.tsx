@@ -19,6 +19,7 @@ import { toast } from 'react-toastify';
 import ScorePanel from 'components/molecules/ScorePanel';
 import Flex from 'components/atoms/Flex';
 import { useRouter } from 'next/navigation';
+import SelectCategories from 'components/molecules/SelectCategories';
 
 type FormType = { tasks: Omit<TaskType, 'userId'>[] };
 
@@ -32,16 +33,20 @@ const Setting = () => {
     control,
     handleSubmit,
     reset,
+    setValue,
+    getValues,
     formState: { isDirty, isValid },
   } = useForm<FormType>({
     defaultValues: {
-      tasks: [{ category: '', content: '', point: 1, createdAt: undefined }],
+      tasks: [{ category: '0', content: '', point: 1, createdAt: undefined }],
     },
   });
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'tasks',
   });
+
+  console.log('isDirty', isDirty);
 
   const { mutate: createTask } = usePostTask();
   const { mutate: updateTask } = useUpdateTask();
@@ -98,7 +103,7 @@ const Setting = () => {
               taskId: value.taskId,
               userId: user.id!,
               content: value.content,
-              category: '',
+              category: value.category,
               point: value.point,
               isActive: true,
             },
@@ -115,7 +120,7 @@ const Setting = () => {
             {
               userId: user.id!,
               content: value.content,
-              category: '',
+              category: value.category,
               point: value.point,
               isActive: true,
             },
@@ -133,7 +138,7 @@ const Setting = () => {
   /* plus button click */
   const handleClickAdd = () => {
     if (user.id) {
-      append({ category: '', content: '', point: 1, isActive: true });
+      append({ category: '0', content: '', point: 1, isActive: true });
     }
   };
 
@@ -175,6 +180,27 @@ const Setting = () => {
               : fields.map((field, index) => {
                   return (
                     <Row key={field.id}>
+                      <Controller
+                        name={`tasks.${index}.category`}
+                        control={control}
+                        render={({ field }) => {
+                          return (
+                            <SelectCategories
+                              defaultValue={getValues(
+                                `tasks.${index}.category`,
+                              )}
+                              onSelect={(value) =>
+                                setValue(
+                                  `tasks.${index}.category`,
+                                  value.value,
+                                  { shouldDirty: true },
+                                )
+                              }
+                            />
+                          );
+                        }}
+                      />
+
                       <Controller
                         key={field.id}
                         name={`tasks.${index}.content`}
@@ -242,6 +268,7 @@ const Container = styled.div`
 const RowsContainer = styled.div`
   display: flex;
   flex-direction: column;
+  justify-content: center;
   row-gap: 1rem;
 `;
 

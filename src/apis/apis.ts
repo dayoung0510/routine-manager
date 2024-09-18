@@ -183,3 +183,15 @@ export const getUserIdActiveTasks = async (userId: string) => {
     console.log('err', e);
   }
 };
+
+/* 카테고리 목록 불러오기 */
+export const getCategories = async () => {
+  try {
+    const querySnapshot = await getDocs(collection(db, 'categories'));
+    const data = querySnapshot.docs.map((doc) => doc.data());
+
+    return data;
+  } catch (e) {
+    console.log('err', e);
+  }
+};
