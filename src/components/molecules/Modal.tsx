@@ -1,7 +1,8 @@
 import Image from 'next/image';
 import styled, { css } from 'styled-components';
 import Cancel from '../../../public/icons/cancel.png';
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
+import Icon from 'components/atoms/icon/Icon';
 
 type Props = {
   open: boolean;
@@ -11,6 +12,7 @@ type Props = {
   width?: number;
   height?: number;
   showCloseButton?: boolean;
+  dimmed?: boolean;
 };
 
 const Modal = ({
@@ -21,25 +23,48 @@ const Modal = ({
   height,
   open,
   showCloseButton = true,
+  dimmed = false,
 }: Props) => {
-  return (
-    <Bg $open={open}>
-      <Wrapper>
-        <StyledModal $width={width} $height={height}>
-          {showCloseButton && (
-            <Image
-              src={Cancel}
-              width={24}
-              height={24}
-              alt="close"
-              style={{ position: 'absolute', top: '-36px', right: '-4px' }}
-              onClick={onClose}
-            />
-          )}
+  const ref = useRef<HTMLDivElement>(null);
 
-          {head && <StyledModalHead>{head}</StyledModalHead>}
-          <StyledModalBody>{children}</StyledModalBody>
-        </StyledModal>
+  // dim 영역 클릭 시 close
+  const handleClose = (e: React.MouseEvent<HTMLElement>) => {
+    if (ref.current === e.target && dimmed) {
+      onClose();
+    }
+  };
+
+  // 외부(배경) 컴포넌트 스크롤 막기
+  useEffect(() => {
+    if (open) {
+      document.body.style.cssText = `position: fixed`;
+    } else {
+      document.body.style.cssText = `position: relative`;
+    }
+
+    return () => {
+      document.body.style.cssText = `position: relative`;
+    };
+  }, [open]);
+
+  return (
+    <Bg $open={open} $dimmed={dimmed}>
+      <Wrapper>
+        <div
+          ref={ref}
+          style={{ position: 'relative', width: '100%', height: '100%' }}
+          onClick={handleClose}
+        >
+          <StyledModal $width={width} $height={height}>
+            {showCloseButton && (
+              <CloseIconWrapper onClick={onClose}>
+                <Icon name="close" />
+              </CloseIconWrapper>
+            )}
+            {head && <StyledModalHead>{head}</StyledModalHead>}
+            <StyledModalBody>{children}</StyledModalBody>
+          </StyledModal>
+        </div>
       </Wrapper>
     </Bg>
   );
@@ -47,7 +72,7 @@ const Modal = ({
 
 export default Modal;
 
-const Bg = styled.div<{ $open: boolean }>`
+const Bg = styled.div<{ $open: boolean; $dimmed: boolean }>`
   position: fixed;
   top: 0;
   bottom: 0;
@@ -55,6 +80,13 @@ const Bg = styled.div<{ $open: boolean }>`
   left: 0;
 
   display: ${(props) => (props.$open ? 'block' : 'none')};
+
+  ${({ $dimmed }) =>
+    $dimmed &&
+    css`
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 2;
+    `}
 `;
 
 const Wrapper = styled.div`
@@ -97,4 +129,10 @@ const StyledModalBody = styled.div`
   & * {
     color: inherit;
   }
+`;
+
+const CloseIconWrapper = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
 `;

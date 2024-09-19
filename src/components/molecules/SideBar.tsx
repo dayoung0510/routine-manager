@@ -5,26 +5,22 @@ import Link from 'next/link';
 import { useMediaQuery } from 'hooks/useMediaQuery';
 
 const menus = [
-  { index: 0, title: 'MONTHLY', link: '/' },
+  { index: 0, title: 'ONEWORD', link: '/' },
   { index: 1, title: 'DAILY', link: '/daily' },
   { index: 2, title: 'DASHBOARD', link: '/dashboard' },
   { index: 3, title: 'HISTORIES', link: '/histories' },
 ];
 
-const DEFAULT_PAGE = 'MONTHLY';
-
 const SideBar = () => {
   const isMobile = useMediaQuery();
-  const pathname = usePathname()?.slice(1);
+  // const pathname = usePathname()?.slice(1);
+  const pathname = usePathname()?.split('/')[1];
 
   return (
     <Container>
       {menus.map((menu) => {
         const lowerCase = menu.title.toLowerCase();
-
-        const current =
-          (menu.title === DEFAULT_PAGE && pathname === '') ||
-          pathname.includes(lowerCase);
+        const current = pathname.includes(lowerCase);
 
         return (
           <Link key={menu.index} href={menu.link}>

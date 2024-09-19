@@ -16,4 +16,13 @@ module.exports = {
       },
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/oneword',
+        permanent: true,
+      },
+    ];
+  },
 };

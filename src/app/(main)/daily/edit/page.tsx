@@ -20,6 +20,7 @@ import ScorePanel from 'components/molecules/ScorePanel';
 import Flex from 'components/atoms/Flex';
 import { useRouter } from 'next/navigation';
 import SelectCategories from 'components/molecules/SelectCategories';
+import Icon from 'components/atoms/icon/Icon';
 
 type FormType = { tasks: Omit<TaskType, 'userId'>[] };
 
@@ -148,24 +149,23 @@ const Setting = () => {
         <div style={{ width: '100%' }}>
           <PlusButtonWrapper>
             <Flex $gap={{ column: 16 }}>
-              <Button
-                type="button"
-                size="sm"
-                color="midGray"
-                disabled={fields.length > 9}
-                onClick={() => router.back()}
+              <IconWrapper onClick={() => router.back()}>
+                <Icon name="back" />
+              </IconWrapper>
+
+              <IconWrapper
+                onClick={() => {
+                  if (fields.length > 9) {
+                    toast.error(
+                      'You have exceeded the maximum number of tasks.',
+                    );
+                  } else {
+                    handleClickAdd();
+                  }
+                }}
               >
-                BACK
-              </Button>
-              <Button
-                type="button"
-                size="sm"
-                color="blue"
-                disabled={fields.length > 9}
-                onClick={handleClickAdd}
-              >
-                ADD
-              </Button>
+                <Icon name="plus" />
+              </IconWrapper>
             </Flex>
             <PointWrapper $isError={point !== 10}>
               <span className="title">POINT</span>
@@ -229,18 +229,17 @@ const Setting = () => {
                           );
                         }}
                       />
-                      <Button
-                        size="sm"
-                        color="red"
-                        disabled={fields.length < 2}
+                      <IconWrapper
                         onClick={() => {
                           if (fields.length > 1) {
-                            remove(index);
+                            return remove(index);
+                          } else {
+                            return toast.error('There should be at least one!');
                           }
                         }}
                       >
-                        DEL
-                      </Button>
+                        <Icon name="close" />
+                      </IconWrapper>
                     </Row>
                   );
                 })}
@@ -316,4 +315,8 @@ const PointWrapper = styled.div<{ $isError: boolean }>`
   > .current {
     color: ${(props) => props.$isError && props.theme.colors.red};
   }
+`;
+
+const IconWrapper = styled.div`
+  cursor: pointer;
 `;

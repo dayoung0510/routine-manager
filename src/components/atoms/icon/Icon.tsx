@@ -19,7 +19,7 @@ const Icon = forwardRef<SVGSVGElement, IconProps>(function Icon(
       height={size}
       color={color ? theme.colors[color] : 'currentColor'}
       viewBox="0 0 96 96"
-      fill="none"
+      fill="currentColor"
       xmlns="http://www.w3.org/2000/svg"
       {...props}
     >

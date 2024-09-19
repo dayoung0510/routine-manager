@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import Button from 'components/atoms/Button';
+import Icon from 'components/atoms/icon/Icon';
 
 type Props = {
   handleScore: (score: number) => void;
