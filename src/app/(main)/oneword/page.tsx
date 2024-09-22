@@ -4,19 +4,16 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Flex from 'components/atoms/Flex';
 import styled from 'styled-components';
-import StrokeBox from 'components/atoms/StrokeBox';
 import Icon from 'components/atoms/icon/Icon';
-import {
-  useGetUserIdInactiveOneWord,
-  useGetUserIdActiveOneWord,
-  usePostUserIdOneWord,
-} from 'hooks/oneword';
+import { useGetUserIdActiveOneWord, usePostUserIdOneWord } from 'hooks/oneword';
 import { useAtomValue } from 'jotai';
 import { userAtom } from 'atoms/user';
 import Modal from 'components/molecules/Modal';
 import Input from 'components/atoms/Input';
 import Button from 'components/atoms/Button';
-import Pin from 'components/molecules/Pin';
+import SubItems from 'components/organisms/oneword/SubItems';
+import { toast } from 'react-toastify';
+import dayjs from 'dayjs';
 
 const OnewordPage = () => {
   const user = useAtomValue(userAtom);
@@ -28,31 +25,61 @@ const OnewordPage = () => {
 
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState('');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
+  const [startAt, setStartAt] = useState('');
+  const [endAt, setEndAt] = useState('');
 
   // oneword 수정
   const { mutate } = usePostUserIdOneWord();
 
   return (
-    <Flex $direction="column" $gap={{ row: 12 }}>
-      <Flex $gap={{ column: 4 }}>
-        <IconWrapper onClick={() => setOpen(true)}>
-          <Icon name="edit" size={20} />
+    <Flex $direction="column" $gap={{ row: 8 }} style={{ height: '100%' }}>
+      {activeOneword && activeOneword[0]?.title && (
+        <IconWrapper onClick={() => router.push('/oneword/histories')}>
+          <Icon color="black7" name="clock" />
         </IconWrapper>
-      </Flex>
-
-      {activeOneword && activeOneword[0].title && (
-        <ContentTypo $gap={{ column: 16 }}>
-          <Icon name="quoteL" size={18} color="black7" />
-          {activeOneword?.[0].title}
-          <Icon name="quoteR" size={18} color="black7" />
-        </ContentTypo>
       )}
 
-      <button onClick={() => router.push('/oneword/histories')}>
-        히스토리 보기
-      </button>
+      <TitleDateContainer
+        $direction="column"
+        $gap={{ row: 6 }}
+        onClick={() => setOpen(true)}
+        style={{ cursor: 'pointer' }}
+      >
+        {activeOneword && activeOneword.length < 1 && (
+          <div>CLICK TO CREATE</div>
+        )}
+        {activeOneword && activeOneword[0]?.title && (
+          <ContentTypo $gap={{ column: 16 }}>
+            <Icon name="quoteL" size={18} color="black7" />
+            {activeOneword?.[0].title}
+            <Icon name="quoteR" size={18} color="black7" />
+          </ContentTypo>
+        )}
+
+        <Flex $gap={{ column: 8 }}>
+          {activeOneword && activeOneword[0]?.startAt && (
+            <p>
+              {dayjs(activeOneword && activeOneword[0]?.startAt).format(
+                'YYYY/MM/DD',
+              )}
+            </p>
+          )}
+          {activeOneword && activeOneword[0]?.endAt && (
+            <>
+              <p>~</p>
+              <p>
+                {dayjs(activeOneword && activeOneword[0]?.endAt).format(
+                  'YYYY/MM/DD',
+                )}
+              </p>
+            </>
+          )}
+        </Flex>
+      </TitleDateContainer>
+
+      {user && user.id && activeOneword && activeOneword?.[0]?.onewordId && (
+        <SubItems userId={user.id} onewordId={activeOneword[0].onewordId} />
+      )}
 
       {open && (
         <Modal open={open} onClose={() => setOpen(false)} width={300} dimmed>
@@ -61,7 +88,8 @@ const OnewordPage = () => {
               <Row>
                 <span>TITLE</span>
                 <Input
-                  defaultValue={activeOneword?.[0].title ?? ''}
+                  defaultValue={activeOneword?.[0]?.title ?? ''}
+                  placeholder="WHAT IS YOUR ONE WORD?"
                   ftColor="black3"
                   bdColor="black3"
                   onChange={(e) => setTitle(e.target.value)}
@@ -71,22 +99,22 @@ const OnewordPage = () => {
               <Row>
                 <span>START DATE</span>
                 <Input
-                  defaultValue={activeOneword?.[0].startAt ?? ''}
-                  placeholder="Please enter 8 digits."
+                  defaultValue={activeOneword?.[0]?.startAt ?? ''}
+                  placeholder="ENTER 8 DIGITS"
                   ftColor="black3"
                   bdColor="black3"
-                  onChange={(e) => setStartDate(e.target.value)}
+                  onChange={(e) => setStartAt(e.target.value)}
                 />
               </Row>
 
               <Row>
                 <span>END DATE</span>
                 <Input
-                  defaultValue={activeOneword?.[0].endAt ?? ''}
-                  placeholder="Please enter 8 digits."
+                  defaultValue={activeOneword?.[0]?.endAt ?? ''}
+                  placeholder="ENTER 8 DIGITS"
                   ftColor="black3"
                   bdColor="black3"
-                  onChange={(e) => setEndDate(e.target.value)}
+                  onChange={(e) => setEndAt(e.target.value)}
                 />
               </Row>
             </Flex>
@@ -98,12 +126,20 @@ const OnewordPage = () => {
                 isFull
                 onClick={() => {
                   if (user.id) {
-                    mutate({
-                      userId: user.id,
-                      title,
-                      startAt: 'aaa',
-                      endAt: 'bbb',
-                    });
+                    mutate(
+                      {
+                        userId: user.id,
+                        title,
+                        startAt,
+                        endAt,
+                      },
+                      {
+                        onSuccess: () => {
+                          setOpen(false);
+                          toast.success('SAVED!');
+                        },
+                      },
+                    );
                   }
                 }}
               >
@@ -122,9 +158,6 @@ export default OnewordPage;
 const ContentTypo = styled(Flex)`
   font-size: 2rem;
 `;
-const IconWrapper = styled.div`
-  cursor: pointer;
-`;
 
 const ModalContainer = styled(Flex)`
   color: #000;
@@ -142,5 +175,15 @@ const Row = styled.div`
 
   span {
     font-size: 0.7rem;
+  }
+`;
+
+const IconWrapper = styled.div`
+  cursor: pointer;
+`;
+
+const TitleDateContainer = styled(Flex)`
+  p {
+    color: ${({ theme }) => theme.colors.black7};
   }
 `;

@@ -43,7 +43,7 @@ export type OneWordType = {
 
 export type OnewordSubItemType = {
   category: string;
-  title: string;
+  content: string;
   isDone: boolean;
   subitemId: string;
 };
@@ -308,4 +308,116 @@ export const getUserIdOnewordIdSubItems = async ({
   } catch (e) {
     console.log(e);
   }
+};
+
+/* 특정 oneword의 subitem 생성하기 */
+export const postUserIdOnewordIdSubItem = async ({
+  userId,
+  onewordId,
+  category,
+  content,
+}: {
+  userId: string;
+  onewordId: string;
+  category: string;
+  content: string;
+}) => {
+  try {
+    const onewordRef = doc(db, 'users', userId, 'onewords', onewordId);
+    const subItemref = collection(onewordRef, 'subItems');
+
+    await addDoc(subItemref, {
+      category,
+      content,
+      createdAt: dayjs().format('YYYY-MM-DD HH:mm'),
+      isDone: false,
+    }).then((res) => {
+      updateDoc(
+        doc(db, 'users', userId, 'onewords', onewordId, 'subItems', res.id),
+        {
+          subitemId: res.id,
+        },
+      );
+    });
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+/* subitem 수정하기 */
+export const putUserIdOnewordIdSubItem = async ({
+  userId,
+  onewordId,
+  subitemId,
+  category,
+  content,
+}: {
+  userId: string;
+  onewordId: string;
+  subitemId: string;
+  category: string;
+  content: string;
+}) => {
+  const docRef = doc(
+    db,
+    'users',
+    userId,
+    'onewords',
+    onewordId,
+    'subItems',
+    subitemId,
+  );
+  await updateDoc(docRef, {
+    content,
+    category,
+    updatedAt: dayjs().format('YYYY-MM-DD HH:mm'),
+  });
+};
+
+/* subitem 삭제하기 */
+export const deleteUserIdOnewordIdSubItem = async ({
+  userId,
+  onewordId,
+  subitemId,
+}: {
+  userId: string;
+  onewordId: string;
+  subitemId: string;
+}) => {
+  const docRef = doc(
+    db,
+    'users',
+    userId,
+    'onewords',
+    onewordId,
+    'subItems',
+    subitemId,
+  );
+  await deleteDoc(docRef);
+};
+
+/* subitem isDone 상태변경하기 */
+export const putSubItemStatus = async ({
+  userId,
+  onewordId,
+  subitemId,
+  isDone,
+}: {
+  userId: string;
+  onewordId: string;
+  subitemId: string;
+  isDone: boolean;
+}) => {
+  const docRef = doc(
+    db,
+    'users',
+    userId,
+    'onewords',
+    onewordId,
+    'subItems',
+    subitemId,
+  );
+  await updateDoc(docRef, {
+    isDone,
+  });
 };

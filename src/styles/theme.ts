@@ -8,6 +8,7 @@ export const theme = {
     purple: '#657CEA',
     lilac: '#a1acfe',
     blue: '#3faeed',
+    yellow: '#f9ab3e',
 
     white: '#eeeeee',
     black0: '#000000',

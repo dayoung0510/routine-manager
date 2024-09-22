@@ -1,13 +1,23 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  QueryClient,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 import {
   getUserIdInactiveOneWord,
   getUserIdActiveOneWord,
   postUserIdOneWord,
+  getUserIdOnewordIdSubItems,
+  postUserIdOnewordIdSubItem,
+  putUserIdOnewordIdSubItem,
+  deleteUserIdOnewordIdSubItem,
+  putSubItemStatus,
 } from 'apis/apis';
 
 export const useGetUserIdInactiveOneWord = (userId?: string) => {
   return useQuery({
-    queryKey: ['oneword'],
+    queryKey: ['inactive-oneword'],
     queryFn: () => {
       if (userId) {
         return getUserIdInactiveOneWord(userId);
@@ -36,7 +46,72 @@ export const usePostUserIdOneWord = () => {
     mutationFn: postUserIdOneWord,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['active-oneword', 'inactive-oneword'],
+        queryKey: ['active-oneword'],
+      });
+    },
+  });
+};
+
+export const useGetUserIdOnewordIdSubItems = ({
+  onewordId,
+  userId,
+}: {
+  onewordId: string;
+  userId: string;
+}) => {
+  return useQuery({
+    queryKey: ['oneword-subItems', onewordId],
+    queryFn: () => getUserIdOnewordIdSubItems({ onewordId, userId }),
+  });
+};
+
+export const usePostUserIdOnewordIdSubItem = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: postUserIdOnewordIdSubItem,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['oneword-subItems'],
+      });
+    },
+  });
+};
+
+export const usePutUserIdOnewordIdSubItem = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: putUserIdOnewordIdSubItem,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['oneword-subItems'],
+      });
+    },
+  });
+};
+
+export const useDeleteUserIdOnewordIdSubItem = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: deleteUserIdOnewordIdSubItem,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['oneword-subItems'],
+      });
+    },
+  });
+};
+
+export const usePutSubItemStatus = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: putSubItemStatus,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['oneword-subItems'],
       });
     },
   });
