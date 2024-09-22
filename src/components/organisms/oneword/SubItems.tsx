@@ -15,17 +15,12 @@ import Icon from 'components/atoms/icon/Icon';
 import { toast } from 'react-toastify';
 import { OnewordSubItemType } from 'apis/apis';
 import Modal from 'components/molecules/Modal';
+import Circle, { colors } from 'components/atoms/Circle';
 
 type SubItemsProps = {
   userId: string;
   onewordId: string;
 };
-
-const colors = [
-  { id: '0', color: '#eb5454' },
-  { id: '1', color: '#f9ab3e' },
-  { id: '2', color: '#369128' },
-];
 
 const SubItems = ({ userId, onewordId }: SubItemsProps) => {
   const router = useRouter();
@@ -252,33 +247,6 @@ const SubItems = ({ userId, onewordId }: SubItemsProps) => {
 export default SubItems;
 
 const Pallete = styled(Flex)``;
-
-const Circle = styled.div<{ $bg: string; $isActive?: boolean }>`
-  width: 12px;
-  height: 12px;
-
-  background-color: ${({ $bg }) => $bg};
-
-  box-shadow:
-    4px 0 #222,
-    -4px 0 #222,
-    0 -4px #222,
-    0 4px #222;
-
-  ${({ $isActive }) =>
-    $isActive &&
-    css`
-      box-shadow:
-        4px 0 #222,
-        -4px 0 #222,
-        0 -4px #222,
-        0 4px #222,
-        0 0 0 8px ${({ theme }) => theme.colors.blue},
-        0 0 0 8px ${({ theme }) => theme.colors.blue},
-        0 0 0 8px ${({ theme }) => theme.colors.blue},
-        0 0 0 8px ${({ theme }) => theme.colors.blue};
-    `}
-`;
 
 const Grid = styled.div`
   display: grid;

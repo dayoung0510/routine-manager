@@ -16,6 +16,7 @@ type Props = {
 
   children: React.ReactNode;
   style?: CSSProperties;
+  onClick?: () => void;
 };
 
 export const getBorderStyle = (
@@ -87,6 +88,7 @@ const StrokeBox = ({
   $thick = 1 /* thickness */,
   $step = 2 /* radius */,
   children,
+  onClick,
   ...props
 }: Props) => {
   return (
@@ -99,6 +101,7 @@ const StrokeBox = ({
       $thick={$thick}
       $bdColor={$bdColor}
       $step={$step}
+      onClick={onClick}
       {...props}
     >
       {children}

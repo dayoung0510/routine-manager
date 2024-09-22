@@ -56,12 +56,17 @@ export const useGetUserIdOnewordIdSubItems = ({
   onewordId,
   userId,
 }: {
-  onewordId: string;
-  userId: string;
+  onewordId?: string;
+  userId?: string;
 }) => {
   return useQuery({
     queryKey: ['oneword-subItems', onewordId],
-    queryFn: () => getUserIdOnewordIdSubItems({ onewordId, userId }),
+    queryFn: () => {
+      if (onewordId && userId) {
+        return getUserIdOnewordIdSubItems({ onewordId, userId });
+      }
+    },
+    enabled: !!onewordId && !!userId,
   });
 };
 

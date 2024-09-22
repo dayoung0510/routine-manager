@@ -35,7 +35,7 @@ const OnewordPage = () => {
     <Flex $direction="column" $gap={{ row: 8 }} style={{ height: '100%' }}>
       {activeOneword && activeOneword[0]?.title && (
         <IconWrapper onClick={() => router.push('/oneword/histories')}>
-          <Icon color="black7" name="clock" />
+          <Icon color="mint" name="clock" />
         </IconWrapper>
       )}
 
@@ -179,7 +179,10 @@ const Row = styled.div`
 `;
 
 const IconWrapper = styled.div`
+  width: 100%;
   cursor: pointer;
+  display: flex;
+  justify-content: flex-end;
 `;
 
 const TitleDateContainer = styled(Flex)`
