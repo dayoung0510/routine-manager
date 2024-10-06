@@ -48,6 +48,19 @@ export type OnewordSubItemType = {
   subitemId: string;
 };
 
+type CategoryType = {
+  id: string;
+  icon: string;
+  title: string;
+};
+
+type SpecialTodoType = {
+  specialTodoId: string;
+  content: string;
+  createdAt: string;
+  isDone: boolean;
+};
+
 /* 모든 유저목록 가져오기 */
 export const getUsers = async () => {
   const querySnapshot = await getDocs(collection(db, 'users'));
@@ -206,7 +219,7 @@ export const getCategories = async () => {
     const querySnapshot = await getDocs(collection(db, 'categories'));
     const data = querySnapshot.docs.map((doc) => doc.data());
 
-    return data;
+    return data as CategoryType[];
   } catch (e) {
     console.log('err', e);
   }
@@ -416,6 +429,96 @@ export const putSubItemStatus = async ({
     onewordId,
     'subItems',
     subitemId,
+  );
+  await updateDoc(docRef, {
+    isDone,
+  });
+};
+
+/* 특정날짜의 special todo 생성하기 */
+export const postSpecialTodo = async ({
+  userId,
+  date,
+  content,
+}: {
+  userId: string;
+  date: string;
+  content: string;
+}) => {
+  try {
+    const ref = collection(
+      db,
+      'users',
+      userId,
+      'records',
+      date,
+      'specialTodos',
+    );
+
+    addDoc(ref, {
+      content,
+      createdAt: dayjs().format('YYYY-MM-DD HH:mm'),
+      isDone: false,
+    }).then((res) => {
+      updateDoc(
+        doc(db, 'users', userId, 'records', date, 'specialTodos', res.id),
+        { specialTodoId: res.id },
+      );
+    });
+  } catch (e) {
+    console.log('err', e);
+  }
+};
+
+/* 특정날짜의 special todo 불러오기 */
+export const getSpecialTodos = async ({
+  userId,
+  date,
+}: {
+  userId: string;
+  date: string;
+}) => {
+  try {
+    const collectionRef = collection(
+      db,
+      'users',
+      userId,
+      'records',
+      date,
+      'specialTodos',
+    );
+
+    const querySnapshot = await getDocs(collectionRef);
+    const specialTodos = querySnapshot.docs.map((doc) => ({
+      ...doc.data(),
+    }));
+
+    return specialTodos as SpecialTodoType[];
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+/* special todo 상태 토글 */
+export const putSpecialTodoStatus = async ({
+  userId,
+  date,
+  specialTodoId,
+  isDone,
+}: {
+  userId: string;
+  date: string;
+  specialTodoId: string;
+  isDone: boolean;
+}) => {
+  const docRef = doc(
+    db,
+    'users',
+    userId,
+    'records',
+    date,
+    'specialTodos',
+    specialTodoId,
   );
   await updateDoc(docRef, {
     isDone,

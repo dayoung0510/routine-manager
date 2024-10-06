@@ -131,29 +131,6 @@ const SubItems = ({ userId, onewordId }: SubItemsProps) => {
         $isFull
         style={{ marginTop: '36px' }}
       >
-        <Flex $gap={{ column: 16 }}>
-          <Pallete $gap={{ column: 16 }}>
-            {colors.map(({ color, id }) => (
-              <Circle
-                key={color}
-                $bg={color}
-                onClick={() => setSubCategory(id)}
-                $isActive={subCategory === id}
-              />
-            ))}
-          </Pallete>
-          <Input
-            ftColor="black3"
-            bdColor="black3"
-            placeholder="ADD SUB ITEM"
-            value={text ?? ''}
-            onChange={(e) => setText(e.target.value)}
-          />
-          <div onClick={handleClickAdd}>
-            <Icon name="check" />
-          </div>
-        </Flex>
-
         <Grid>
           {colors.map((colorGrid) => (
             <GridItem key={colorGrid.id} $color={colorGrid.color}>
@@ -175,6 +152,29 @@ const SubItems = ({ userId, onewordId }: SubItemsProps) => {
             </GridItem>
           ))}
         </Grid>
+
+        <Flex $gap={{ column: 16 }} style={{ position: 'absolute', bottom: 0 }}>
+          <Pallete $gap={{ column: 16 }}>
+            {colors.map(({ color, id }) => (
+              <Circle
+                key={color}
+                $bg={color}
+                onClick={() => setSubCategory(id)}
+                $isActive={subCategory === id}
+              />
+            ))}
+          </Pallete>
+          <Input
+            ftColor="black3"
+            bdColor="black3"
+            placeholder="ADD SUB ITEM"
+            value={text ?? ''}
+            onChange={(e) => setText(e.target.value)}
+          />
+          <div onClick={handleClickAdd}>
+            <Icon name="check" />
+          </div>
+        </Flex>
       </Flex>
 
       {selectedItem?.subitemId && (

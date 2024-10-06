@@ -35,7 +35,7 @@ const OnewordPage = () => {
     <Flex $direction="column" $gap={{ row: 8 }} style={{ height: '100%' }}>
       {activeOneword && activeOneword[0]?.title && (
         <IconWrapper onClick={() => router.push('/oneword/histories')}>
-          <Icon color="mint" name="clock" />
+          <Icon color="black3" name="clock" />
         </IconWrapper>
       )}
 

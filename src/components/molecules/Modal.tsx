@@ -132,7 +132,7 @@ const StyledModalBody = styled.div`
 `;
 
 const CloseIconWrapper = styled.div`
-  width: 100%;
-  display: flex;
-  justify-content: flex-end;
+  position: absolute;
+  top: 0;
+  right: 0;
 `;
