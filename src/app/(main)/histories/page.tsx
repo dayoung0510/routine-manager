@@ -1,17 +1,20 @@
 'use client';
 
 import styled from 'styled-components';
-import { useGetUserIdAllTasks } from 'hooks/tasks';
+import { useGetCategories, useGetUserIdAllTasks } from 'hooks/tasks';
 import { useAtomValue } from 'jotai';
 import { userAtom } from 'atoms/user';
 import StrokeBox from 'components/atoms/StrokeBox';
 import { useDeleteTask } from 'hooks/tasks';
 import Button from 'components/atoms/Button';
 import { toast } from 'react-toastify';
+import Flex from 'components/atoms/Flex';
 
 const Setting = () => {
   const user = useAtomValue(userAtom);
+
   const { data } = useGetUserIdAllTasks(user.id);
+  const { data: categories } = useGetCategories();
 
   const { mutate } = useDeleteTask();
 
@@ -28,18 +31,25 @@ const Setting = () => {
     }
   };
 
+  // 카테고리 텍스트표기
+  const findCategory = (id: string) => {
+    if (categories && categories.length) {
+      return categories.find((i) => i.id === id)?.title ?? '!';
+    }
+    return '-';
+  };
+
   return (
     <Container>
       {data?.map((i) => (
         <Row key={i.taskId}>
           <Cell>
-            {i.category.length > 0 && (
-              <StrokeBox $bdColor="purple" $bgColor="lilac">
-                {i.category}
-              </StrokeBox>
-            )}
-
-            <Text $isOngoing={i.isActive}>{i.content}</Text>
+            <Text $isOngoing={i.isActive}>
+              <Flex $gap={{ column: 4 }}>
+                {i.content}
+                {i.category.length > 0 && <p>({findCategory(i.category)})</p>}
+              </Flex>
+            </Text>
           </Cell>
           <Cell>
             <Text $isOngoing={i.isActive}>
