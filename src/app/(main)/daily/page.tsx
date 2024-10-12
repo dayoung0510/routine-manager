@@ -9,6 +9,8 @@ import {
   usePostSpecialTodo,
   usePutSpecialTodoStatus,
   useGetCategories,
+  usePutTodayTask,
+  useGetTodayDoneTaskList,
 } from 'hooks/tasks';
 import { useAtomValue } from 'jotai';
 import { userAtom } from 'atoms/user';
@@ -41,6 +43,10 @@ const DailyPage = () => {
 
   const { data: tasks } = useGetUserIdActiveTasks(user.id);
   const { data: categories } = useGetCategories();
+  const { data: todayDoneTasks } = useGetTodayDoneTaskList({
+    userId: user.id,
+    date: today,
+  });
   const { data: specialTodos } = useGetSpecialTodos({
     userId: user.id,
     date: today,
@@ -48,6 +54,7 @@ const DailyPage = () => {
 
   const { mutate: addSpecialTodo } = usePostSpecialTodo();
   const { mutate: toggleSpecialTodo } = usePutSpecialTodoStatus();
+  const { mutate: toggleTask } = usePutTodayTask();
 
   const [specialModal, setSpecialModal] = useState(false);
   const [specialInput, setSpecialInput] = useState('');
@@ -104,24 +111,77 @@ const DailyPage = () => {
     }
   };
 
+  // 오늘의 완료된 태스크 목록
+  const doneTaskList = todayDoneTasks?.map((i) => i.id);
+
+  // 오늘의 태스크 상태 토글
+  const handleToggleTodayTask = (taskId: string) => {
+    if (user.id) {
+      const payload = {
+        userId: user.id,
+        date: today,
+        taskId,
+      };
+      if (doneTaskList?.includes(taskId)) {
+        toggleTask(
+          { ...payload, isDone: false },
+          {
+            onSuccess: () => {
+              queryClient.invalidateQueries({ queryKey: ['tasks', today] });
+            },
+          },
+        );
+      } else {
+        toggleTask(
+          { ...payload, isDone: true },
+          {
+            onSuccess: () => {
+              queryClient.invalidateQueries({ queryKey: ['tasks', today] });
+            },
+          },
+        );
+      }
+    }
+  };
+
   return (
     <Container $direction="column" $gap={{ row: 16 }} $isFull>
       <Flex $direction="column" $isFull $align="start">
         <Title>DAILY ROUTINE</Title>
         <RowContainer style={{ marginTop: '8px' }}>
           {tasks?.map((task) => {
+            const isDone = task.taskId
+              ? doneTaskList?.includes(task.taskId)
+              : false;
+
             return (
-              <div key={task.taskId} style={{ position: 'relative' }}>
+              <div
+                key={task.taskId}
+                style={{ position: 'relative' }}
+                onClick={() => {
+                  if (task.taskId) {
+                    handleToggleTodayTask(task.taskId);
+                  }
+                }}
+              >
                 <Bar>
                   <Text>{findCategory(task.category)}</Text>
                   <Text>{task.point}</Text>
                 </Bar>
                 <StrokeBox
                   $pd={0.75}
-                  $bgColor={colorMap[task.category]}
+                  $bdColor={isDone ? 'black7' : 'black0'}
+                  $bgColor={isDone ? 'midGray' : colorMap[task.category]}
                   style={{ cursor: 'pointer' }}
                 >
-                  {task.content}
+                  <p
+                    style={{
+                      color: isDone ? '#777' : '#000',
+                      textDecoration: isDone ? 'line-through' : 'none',
+                    }}
+                  >
+                    {task.content}
+                  </p>
                 </StrokeBox>
               </div>
             );

@@ -10,6 +10,8 @@ import {
   postSpecialTodo,
   getSpecialTodos,
   putSpecialTodoStatus,
+  putTodayTask,
+  getTodayDoneTaskList,
 } from 'apis/apis';
 
 export const usePostTask = () => {
@@ -110,4 +112,26 @@ export const useGetSpecialTodos = ({
 
 export const usePutSpecialTodoStatus = () => {
   return useMutation({ mutationFn: putSpecialTodoStatus });
+};
+
+export const usePutTodayTask = () => {
+  return useMutation({ mutationFn: putTodayTask });
+};
+
+export const useGetTodayDoneTaskList = ({
+  userId,
+  date,
+}: {
+  userId?: string;
+  date: string;
+}) => {
+  return useQuery({
+    queryFn: () => {
+      if (userId && date) {
+        return getTodayDoneTaskList({ userId, date });
+      }
+    },
+    queryKey: ['tasks', date],
+    enabled: !!userId && !!date,
+  });
 };

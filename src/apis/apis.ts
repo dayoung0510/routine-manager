@@ -524,3 +524,47 @@ export const putSpecialTodoStatus = async ({
     isDone,
   });
 };
+
+/* 특정날짜의 특정 task 상태 토글 */
+export const putTodayTask = async ({
+  userId,
+  date,
+  taskId,
+  isDone,
+}: {
+  userId: string;
+  date: string;
+  taskId: string;
+  isDone: boolean;
+}) => {
+  const docRef = doc(db, 'users', userId, 'records', date, 'tasks', taskId);
+  await setDoc(
+    docRef,
+    { isDone, createdAt: dayjs().format('YYYY-MM-DD HH:mm') },
+    { merge: true },
+  );
+};
+
+/* 특정날짜의 isDone 상태인 task id 불러오기 */
+export const getTodayDoneTaskList = async ({
+  userId,
+  date,
+}: {
+  userId: string;
+  date: string;
+}) => {
+  try {
+    const tasksRef = collection(db, 'users', userId, 'records', date, 'tasks');
+    const q = query(tasksRef, where('isDone', '==', true));
+    const querySnapshot = await getDocs(q);
+
+    const completedTasks = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    return completedTasks as { id: string; isDone: boolean }[];
+  } catch (e) {
+    console.log('err', e);
+  }
+};
