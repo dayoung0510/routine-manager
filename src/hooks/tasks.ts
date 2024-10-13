@@ -12,6 +12,7 @@ import {
   putSpecialTodoStatus,
   putTodayTask,
   getTodayDoneTaskList,
+  putTodayScore,
 } from 'apis/apis';
 
 export const usePostTask = () => {
@@ -134,4 +135,8 @@ export const useGetTodayDoneTaskList = ({
     queryKey: ['tasks', date],
     enabled: !!userId && !!date,
   });
+};
+
+export const usePutTodayScore = () => {
+  return useMutation({ mutationFn: putTodayScore });
 };

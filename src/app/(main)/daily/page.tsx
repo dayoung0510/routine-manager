@@ -11,6 +11,7 @@ import {
   useGetCategories,
   usePutTodayTask,
   useGetTodayDoneTaskList,
+  usePutTodayScore,
 } from 'hooks/tasks';
 import { useAtomValue } from 'jotai';
 import { userAtom } from 'atoms/user';
@@ -19,7 +20,7 @@ import { theme } from 'styles/theme';
 import Icon from 'components/atoms/icon/Icon';
 import dayjs from 'dayjs';
 import Modal from 'components/molecules/Modal';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Input from 'components/atoms/Input';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
@@ -55,6 +56,7 @@ const DailyPage = () => {
   const { mutate: addSpecialTodo } = usePostSpecialTodo();
   const { mutate: toggleSpecialTodo } = usePutSpecialTodoStatus();
   const { mutate: toggleTask } = usePutTodayTask();
+  const { mutate: saveTodayScore } = usePutTodayScore();
 
   const [specialModal, setSpecialModal] = useState(false);
   const [specialInput, setSpecialInput] = useState('');
@@ -146,6 +148,17 @@ const DailyPage = () => {
   const score = doneDetailInfoList?.reduce((acc, cur) => {
     return acc + cur.point * 10;
   }, 0);
+  useEffect(() => {
+    console.log('!');
+    // 오늘의 스코어 업데이트
+    if (score && user.id) {
+      saveTodayScore({
+        userId: user.id,
+        date: today,
+        score: score.toString(),
+      });
+    }
+  }, [score]);
 
   return (
     <Container $direction="column" $gap={{ row: 16 }} $isFull>

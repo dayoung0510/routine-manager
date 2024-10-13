@@ -8,7 +8,7 @@ const menus = [
   { index: 0, title: 'ONEWORD', link: '/' },
   { index: 1, title: 'DAILY', link: '/daily' },
   { index: 2, title: 'EDIT', link: '/daily/edit', indent: true },
-  { index: 3, title: 'DASHBOARD', link: '/dashboard' },
+  { index: 3, title: 'CALENDAR', link: '/calendar' },
   { index: 4, title: 'HISTORIES', link: '/histories' },
 ];
 

@@ -47,8 +47,6 @@ const Setting = () => {
     name: 'tasks',
   });
 
-  console.log('isDirty', isDirty);
-
   const { mutate: createTask } = usePostTask();
   const { mutate: updateTask } = useUpdateTask();
   const { mutate: inactiveTask } = useInactiveTask();

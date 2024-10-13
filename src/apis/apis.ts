@@ -568,3 +568,29 @@ export const getTodayDoneTaskList = async ({
     console.log('err', e);
   }
 };
+
+// 오늘의 점수 저장
+export const putTodayScore = async ({
+  userId,
+  date,
+  score,
+}: {
+  userId: string;
+  date: string;
+  score: string;
+}) => {
+  const collectionRef = collection(
+    db,
+    'users',
+    userId,
+    'records',
+    date,
+    'score',
+  );
+  const docRef = doc(collectionRef, 'score');
+  await setDoc(
+    docRef,
+    { score, createdAt: dayjs().format('YYYY-MM-DD HH:mm') },
+    { merge: true },
+  );
+};
