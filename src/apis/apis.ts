@@ -579,18 +579,23 @@ export const putTodayScore = async ({
   date: string;
   score: string;
 }) => {
-  const collectionRef = collection(
-    db,
-    'users',
-    userId,
-    'records',
-    date,
-    'score',
-  );
-  const docRef = doc(collectionRef, 'score');
-  await setDoc(
-    docRef,
-    { score, createdAt: dayjs().format('YYYY-MM-DD HH:mm') },
-    { merge: true },
-  );
+  const docRef = doc(db, 'users', userId, 'records', date);
+
+  await setDoc(docRef, { score }, { merge: true });
+};
+
+// 특정유저의 기록이 있는 날짜목록 불러오기(for 캘린더)
+export const getDateList = async ({ userId }: { userId: string }) => {
+  try {
+    const collectionRef = collection(db, 'users', userId, 'records');
+    const docSnap = await getDocs(collectionRef);
+    const data = docSnap.docs.map((doc) => ({
+      date: doc.id,
+      ...doc.data(),
+    }));
+
+    return data as { date: string; score: string }[];
+  } catch (error) {
+    console.error('Error getting documents:', error);
+  }
 };

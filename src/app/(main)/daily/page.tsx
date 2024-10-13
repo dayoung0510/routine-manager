@@ -149,7 +149,6 @@ const DailyPage = () => {
     return acc + cur.point * 10;
   }, 0);
   useEffect(() => {
-    console.log('!');
     // 오늘의 스코어 업데이트
     if (score && user.id) {
       saveTodayScore({

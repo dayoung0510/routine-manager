@@ -13,6 +13,7 @@ import {
   putTodayTask,
   getTodayDoneTaskList,
   putTodayScore,
+  getDateList,
 } from 'apis/apis';
 
 export const usePostTask = () => {
@@ -139,4 +140,16 @@ export const useGetTodayDoneTaskList = ({
 
 export const usePutTodayScore = () => {
   return useMutation({ mutationFn: putTodayScore });
+};
+
+export const useGetDateList = ({ userId }: { userId?: string }) => {
+  return useQuery({
+    queryFn: () => {
+      if (userId) {
+        return getDateList({ userId });
+      }
+    },
+    queryKey: ['allRecords', userId],
+    enabled: !!userId,
+  });
 };
