@@ -67,11 +67,6 @@ const DailyPage = () => {
     return '-';
   };
 
-  // 오늘의 점수 계산
-  const todayScore = (): number => {
-    return 0;
-  };
-
   // special todo 추가
   const handleClickSpecialAdd = () => {
     if (user.id) {
@@ -111,8 +106,8 @@ const DailyPage = () => {
     }
   };
 
-  // 오늘의 완료된 태스크 목록
-  const doneTaskList = todayDoneTasks?.map((i) => i.id);
+  // 오늘의 완료된 태스크 아이디 리스트
+  const doneTaskList = todayDoneTasks?.map((i) => i.taskId);
 
   // 오늘의 태스크 상태 토글
   const handleToggleTodayTask = (taskId: string) => {
@@ -143,6 +138,14 @@ const DailyPage = () => {
       }
     }
   };
+
+  // 오늘의 점수 계산
+  const doneDetailInfoList = tasks?.filter((task) =>
+    task.taskId ? doneTaskList?.includes(task.taskId) : '',
+  );
+  const score = doneDetailInfoList?.reduce((acc, cur) => {
+    return acc + cur.point * 10;
+  }, 0);
 
   return (
     <Container $direction="column" $gap={{ row: 16 }} $isFull>
@@ -227,7 +230,7 @@ const DailyPage = () => {
 
       <ScoreWrapper>
         <p>TODAY SCORE</p>
-        <p>{todayScore()}</p>
+        <p>{score}</p>
       </ScoreWrapper>
 
       {specialModal && (

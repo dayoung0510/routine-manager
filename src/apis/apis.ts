@@ -559,11 +559,11 @@ export const getTodayDoneTaskList = async ({
     const querySnapshot = await getDocs(q);
 
     const completedTasks = querySnapshot.docs.map((doc) => ({
-      id: doc.id,
+      taskId: doc.id,
       ...doc.data(),
     }));
 
-    return completedTasks as { id: string; isDone: boolean }[];
+    return completedTasks as { taskId: string; isDone: boolean }[];
   } catch (e) {
     console.log('err', e);
   }
