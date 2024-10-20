@@ -43,7 +43,7 @@ const DailyPage = () => {
   const queryClient = useQueryClient();
   const today = dayjs().format('YYYYMMDD').toString();
 
-  const buttonRef = useRef<HTMLButtonElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const { data: tasks } = useGetUserIdActiveTasks(user.id);
   const { data: categories } = useGetCategories();
@@ -197,6 +197,15 @@ const DailyPage = () => {
     }
   }, [score]);
 
+  // special todo 추가모달 열렸을 때 input 자동포커싱
+  useEffect(() => {
+    if (specialModal) {
+      if (inputRef.current) {
+        inputRef.current.focus();
+      }
+    }
+  }, [specialModal]);
+
   return (
     <Container $direction="column" $gap={{ row: 16 }} $isFull>
       <DailyAndSpecialContainer $direction="column" $isFull $align="start">
@@ -327,13 +336,14 @@ const DailyPage = () => {
               $isFull
             >
               <Input
+                ref={inputRef}
                 bdColor="black3"
                 ftColor="black3"
                 placeholder={`TODAY'S SPECIAL TODO`}
                 style={{ width: '100%' }}
                 onChange={(e) => setSpecialInput(e.target.value)}
               />
-              <Button type="submit" ref={buttonRef} color="blue" isFull>
+              <Button type="submit" color="blue" isFull>
                 CONFIRM
               </Button>
             </Flex>

@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { InputHTMLAttributes } from 'react';
+import { forwardRef, InputHTMLAttributes } from 'react';
 import theme from 'styles/theme';
 
 type ColorType = keyof typeof theme.colors;
@@ -8,13 +8,15 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   bdColor?: ColorType;
 }
 
-const Input = ({
-  ftColor = 'white',
-  bdColor = 'mint',
-  ...props
-}: InputProps) => {
-  return <StyledInput $bdColor={bdColor} $ftColor={ftColor} {...props} />;
-};
+const Input = forwardRef<HTMLInputElement, InputProps>(
+  ({ ftColor = 'white', bdColor = 'mint', ...props }, ref) => {
+    return (
+      <StyledInput ref={ref} $bdColor={bdColor} $ftColor={ftColor} {...props} />
+    );
+  },
+);
+
+Input.displayName = 'Input';
 
 export default Input;
 
