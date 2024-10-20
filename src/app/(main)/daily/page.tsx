@@ -178,87 +178,89 @@ const DailyPage = () => {
 
   return (
     <Container $direction="column" $gap={{ row: 16 }} $isFull>
-      <Flex $direction="column" $isFull $align="start">
-        <Title>DAILY ROUTINE</Title>
-        <RowContainer style={{ marginTop: '8px' }}>
-          {tasks?.map((task) => {
-            const isDone = task.taskId
-              ? doneTaskList?.includes(task.taskId)
-              : false;
+      <DailyAndSpecialContainer $direction="column" $isFull $align="start">
+        <Flex $direction="column" $isFull $align="start">
+          <Title>DAILY ROUTINE</Title>
+          <RowContainer style={{ marginTop: '8px' }}>
+            {tasks?.map((task) => {
+              const isDone = task.taskId
+                ? doneTaskList?.includes(task.taskId)
+                : false;
 
-            return (
-              <div
-                key={task.taskId}
-                style={{ position: 'relative' }}
-                onClick={() => {
-                  if (task.taskId) {
-                    handleToggleTodayTask(task.taskId, task.content);
-                  }
-                }}
-              >
-                <Bar>
-                  <Text>{findCategory(task.category)}</Text>
-                  <Text>{task.point}</Text>
-                </Bar>
+              return (
+                <div
+                  key={task.taskId}
+                  style={{ position: 'relative' }}
+                  onClick={() => {
+                    if (task.taskId) {
+                      handleToggleTodayTask(task.taskId, task.content);
+                    }
+                  }}
+                >
+                  <Bar>
+                    <Text>{findCategory(task.category)}</Text>
+                    <Text>{task.point}</Text>
+                  </Bar>
+                  <StrokeBox
+                    $pd={0.75}
+                    $bdColor={isDone ? 'black7' : 'black0'}
+                    $bgColor={isDone ? 'midGray' : colorMap[task.category]}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    <p
+                      style={{
+                        color: isDone ? '#777' : '#000',
+                        textDecoration: isDone ? 'line-through' : 'none',
+                      }}
+                    >
+                      {task.content}
+                    </p>
+                  </StrokeBox>
+                </div>
+              );
+            })}
+          </RowContainer>
+        </Flex>
+
+        <Flex $direction="column" $isFull $align="start">
+          <Flex $justify="center" $align="center" $gap={{ column: 4 }}>
+            <Title>SPECIAL TODO</Title>
+            <IconWrapper onClick={() => setSpecialModal(true)}>
+              <Icon name="plus" size={20} />
+            </IconWrapper>
+          </Flex>
+          <RowContainer>
+            {specialTodos?.map((special) => {
+              const isDone = special.isDone;
+
+              return (
                 <StrokeBox
+                  key={special.content}
                   $pd={0.75}
+                  $bgColor={isDone ? 'midGray' : 'lilac'}
                   $bdColor={isDone ? 'black7' : 'black0'}
-                  $bgColor={isDone ? 'midGray' : colorMap[task.category]}
                   style={{ cursor: 'pointer' }}
+                  onClick={() => {
+                    handleToggleSpecialTodo(
+                      special.specialTodoId,
+                      special.isDone,
+                    );
+                  }}
                 >
                   <p
                     style={{
-                      color: isDone ? '#777' : '#000',
+                      color: isDone ? '#999' : '#000',
                       textDecoration: isDone ? 'line-through' : 'none',
                     }}
                   >
-                    {task.content}
+                    {special.content}
                   </p>
                 </StrokeBox>
-              </div>
-            );
-          })}
-        </RowContainer>
-      </Flex>
-
-      <Flex $direction="column" $isFull $align="start">
-        <Flex $justify="center" $align="center" $gap={{ column: 4 }}>
-          <Title>SPECIAL TODO</Title>
-          <IconWrapper onClick={() => setSpecialModal(true)}>
-            <Icon name="plus" size={20} />
-          </IconWrapper>
+              );
+            })}
+          </RowContainer>
         </Flex>
-        <RowContainer>
-          {specialTodos?.map((special) => {
-            const isDone = special.isDone;
-
-            return (
-              <StrokeBox
-                key={special.content}
-                $pd={0.75}
-                $bgColor={isDone ? 'midGray' : 'lilac'}
-                $bdColor={isDone ? 'black7' : 'black0'}
-                style={{ cursor: 'pointer' }}
-                onClick={() => {
-                  handleToggleSpecialTodo(
-                    special.specialTodoId,
-                    special.isDone,
-                  );
-                }}
-              >
-                <p
-                  style={{
-                    color: isDone ? '#777' : '#000',
-                    textDecoration: isDone ? 'line-through' : 'none',
-                  }}
-                >
-                  {special.content}
-                </p>
-              </StrokeBox>
-            );
-          })}
-        </RowContainer>
-      </Flex>
+      </DailyAndSpecialContainer>
 
       <ScoreWrapper>
         <p>TODAY SCORE</p>
@@ -345,6 +347,7 @@ const ScoreWrapper = styled.div`
   position: absolute;
   bottom: 0;
   height: 36px;
+  padding-top: 12px;
   background-color: ${({ theme }) => theme.colors.lightGray};
   width: 100%;
   display: flex;
@@ -368,4 +371,8 @@ const ScoreWrapper = styled.div`
 
 const IconWrapper = styled.div`
   cursor: pointer;
+`;
+
+const DailyAndSpecialContainer = styled(Flex)`
+  height: calc(100% - 36px);
 `;
