@@ -324,6 +324,11 @@ const DailyPage = () => {
               placeholder={`TODAY'S SPECIAL TODO`}
               style={{ width: '100%' }}
               onChange={(e) => setSpecialInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleClickSpecialAdd();
+                }
+              }}
             />
             <Button color="blue" isFull onClick={handleClickSpecialAdd}>
               CONFIRM
