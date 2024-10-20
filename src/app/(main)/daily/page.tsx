@@ -12,6 +12,7 @@ import {
   usePutTodayTask,
   useGetTodayDoneTaskList,
   usePutTodayScore,
+  useDeleteSpecialTodo,
 } from 'hooks/tasks';
 import { useAtomValue } from 'jotai';
 import { userAtom } from 'atoms/user';
@@ -57,6 +58,7 @@ const DailyPage = () => {
   const { mutate: toggleSpecialTodo } = usePutSpecialTodoStatus();
   const { mutate: toggleTask } = usePutTodayTask();
   const { mutate: saveTodayScore } = usePutTodayScore();
+  const { mutate: deleteSpecialTodo } = useDeleteSpecialTodo();
 
   const [specialModal, setSpecialModal] = useState(false);
   const [specialInput, setSpecialInput] = useState('');
@@ -102,6 +104,23 @@ const DailyPage = () => {
             queryClient.invalidateQueries({
               queryKey: ['specialTodos', today],
             });
+          },
+        },
+      );
+    }
+  };
+
+  // specialTodo 삭제
+  const handleDeleteSpecialTodo = (specialTodoId: string) => {
+    if (user.id) {
+      deleteSpecialTodo(
+        { userId: user.id, specialTodoId, date: today },
+        {
+          onSuccess: () => {
+            queryClient.invalidateQueries({
+              queryKey: ['specialTodos', today],
+            });
+            toast.success('DELETED!');
           },
         },
       );
@@ -234,28 +253,46 @@ const DailyPage = () => {
               const isDone = special.isDone;
 
               return (
-                <StrokeBox
-                  key={special.content}
-                  $pd={0.75}
-                  $bgColor={isDone ? 'midGray' : 'lilac'}
-                  $bdColor={isDone ? 'black7' : 'black0'}
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => {
-                    handleToggleSpecialTodo(
-                      special.specialTodoId,
-                      special.isDone,
-                    );
-                  }}
-                >
-                  <p
-                    style={{
-                      color: isDone ? '#999' : '#000',
-                      textDecoration: isDone ? 'line-through' : 'none',
+                <div key={special.content} style={{ position: 'relative' }}>
+                  <Bar>
+                    <div></div>
+                    <div
+                      onClick={(e) => {
+                        e.preventDefault();
+                        if (special.specialTodoId) {
+                          handleDeleteSpecialTodo(special.specialTodoId);
+                        }
+                      }}
+                    >
+                      <Icon
+                        name="close"
+                        size={12}
+                        style={{ cursor: 'pointer' }}
+                      />
+                    </div>
+                  </Bar>
+                  <StrokeBox
+                    $pd={0.75}
+                    $bgColor={isDone ? 'midGray' : 'lilac'}
+                    $bdColor={isDone ? 'black7' : 'black0'}
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => {
+                      handleToggleSpecialTodo(
+                        special.specialTodoId,
+                        special.isDone,
+                      );
                     }}
                   >
-                    {special.content}
-                  </p>
-                </StrokeBox>
+                    <p
+                      style={{
+                        color: isDone ? '#999' : '#000',
+                        textDecoration: isDone ? 'line-through' : 'none',
+                      }}
+                    >
+                      {special.content}
+                    </p>
+                  </StrokeBox>
+                </div>
               );
             })}
           </RowContainer>

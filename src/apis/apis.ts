@@ -665,3 +665,25 @@ export const getTasks = async ({
     console.log(e);
   }
 };
+
+/* special todo 영구삭제 */
+export const deleteSpecialTodo = async ({
+  specialTodoId,
+  date,
+  userId,
+}: {
+  specialTodoId: string;
+  date: string;
+  userId: string;
+}) => {
+  const docRef = doc(
+    db,
+    'users',
+    userId,
+    'records',
+    date,
+    'specialTodos',
+    specialTodoId,
+  );
+  await deleteDoc(docRef);
+};

@@ -15,6 +15,7 @@ import {
   putTodayScore,
   getDateList,
   getTasks,
+  deleteSpecialTodo,
 } from 'apis/apis';
 
 export const usePostTask = () => {
@@ -179,4 +180,8 @@ export const useGetTasks = ({
     queryKey: ['recordsTasks', userId, date],
     enabled: !!userId,
   });
+};
+
+export const useDeleteSpecialTodo = () => {
+  return useMutation({ mutationFn: deleteSpecialTodo });
 };
