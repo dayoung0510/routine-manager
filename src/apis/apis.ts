@@ -441,10 +441,12 @@ export const postSpecialTodo = async ({
   userId,
   date,
   content,
+  isDone,
 }: {
   userId: string;
   date: string;
   content: string;
+  isDone: boolean;
 }) => {
   try {
     const ref = collection(
@@ -456,16 +458,18 @@ export const postSpecialTodo = async ({
       'specialTodos',
     );
 
-    addDoc(ref, {
+    const res = await addDoc(ref, {
       content,
       createdAt: dayjs().format('YYYY-MM-DD HH:mm'),
-      isDone: false,
-    }).then((res) => {
-      updateDoc(
-        doc(db, 'users', userId, 'records', date, 'specialTodos', res.id),
-        { specialTodoId: res.id },
-      );
+      isDone,
     });
+
+    await updateDoc(
+      doc(db, 'users', userId, 'records', date, 'specialTodos', res.id),
+      { specialTodoId: res.id },
+    );
+
+    return { specialTodoId: res.id, content, date, isDone };
   } catch (e) {
     console.log('err', e);
   }
@@ -512,6 +516,7 @@ export const putSpecialTodoStatus = async ({
   specialTodoId: string;
   isDone: boolean;
 }) => {
+  console.log('22', userId, date, specialTodoId, isDone);
   const docRef = doc(
     db,
     'users',

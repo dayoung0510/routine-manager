@@ -73,18 +73,12 @@ const DailyPage = () => {
   const handleClickSpecialAdd = () => {
     if (user.id) {
       addSpecialTodo(
-        { date: today, content: specialInput, userId: user.id },
+        { date: today, content: specialInput, userId: user.id, isDone: false },
         {
-          onSuccess: () => {
-            queryClient.setQueryData(
-              ['specialTodos', today],
-              (oldData: any) => {
-                return [
-                  ...(oldData || []),
-                  { date: today, content: specialInput, userId: user.id },
-                ];
-              },
-            );
+          onSuccess: (res) => {
+            queryClient.invalidateQueries({
+              queryKey: ['specialTodos', today],
+            });
             setSpecialModal(false);
             toast.success('SUCCESS!');
           },
@@ -101,7 +95,7 @@ const DailyPage = () => {
           userId: user.id,
           specialTodoId: id,
           date: today,
-          isDone: !currentStatus,
+          isDone: !currentStatus ?? true,
         },
         {
           onSuccess: () => {
@@ -245,9 +239,12 @@ const DailyPage = () => {
                 $bgColor={isDone ? 'midGray' : 'lilac'}
                 $bdColor={isDone ? 'black7' : 'black0'}
                 style={{ cursor: 'pointer' }}
-                onClick={() =>
-                  handleToggleSpecialTodo(special.specialTodoId, special.isDone)
-                }
+                onClick={() => {
+                  handleToggleSpecialTodo(
+                    special.specialTodoId,
+                    special.isDone,
+                  );
+                }}
               >
                 <p
                   style={{
