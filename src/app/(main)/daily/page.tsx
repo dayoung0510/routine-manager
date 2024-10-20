@@ -21,7 +21,7 @@ import { theme } from 'styles/theme';
 import Icon from 'components/atoms/icon/Icon';
 import dayjs from 'dayjs';
 import Modal from 'components/molecules/Modal';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Input from 'components/atoms/Input';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
@@ -42,6 +42,8 @@ const DailyPage = () => {
 
   const queryClient = useQueryClient();
   const today = dayjs().format('YYYYMMDD').toString();
+
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   const { data: tasks } = useGetUserIdActiveTasks(user.id);
   const { data: categories } = useGetCategories();
@@ -311,29 +313,31 @@ const DailyPage = () => {
           width={400}
           dimmed
         >
-          <Flex
-            $justify="center"
-            $direction="column"
-            $gap={{ row: 24 }}
-            style={{ padding: '1rem' }}
-            $isFull
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleClickSpecialAdd();
+            }}
           >
-            <Input
-              bdColor="black3"
-              ftColor="black3"
-              placeholder={`TODAY'S SPECIAL TODO`}
-              style={{ width: '100%' }}
-              onChange={(e) => setSpecialInput(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  handleClickSpecialAdd();
-                }
-              }}
-            />
-            <Button color="blue" isFull onClick={handleClickSpecialAdd}>
-              CONFIRM
-            </Button>
-          </Flex>
+            <Flex
+              $justify="center"
+              $direction="column"
+              $gap={{ row: 24 }}
+              style={{ padding: '1rem' }}
+              $isFull
+            >
+              <Input
+                bdColor="black3"
+                ftColor="black3"
+                placeholder={`TODAY'S SPECIAL TODO`}
+                style={{ width: '100%' }}
+                onChange={(e) => setSpecialInput(e.target.value)}
+              />
+              <Button type="submit" ref={buttonRef} color="blue" isFull>
+                CONFIRM
+              </Button>
+            </Flex>
+          </form>
         </Modal>
       )}
     </Container>

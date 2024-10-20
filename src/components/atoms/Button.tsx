@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components';
-import { ButtonHTMLAttributes } from 'react';
+import { ButtonHTMLAttributes, forwardRef } from 'react';
 import theme from 'styles/theme';
 import { darkenColor, lightenColor } from 'utils/common';
 
@@ -38,29 +38,37 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   subColor?: ColorType;
 }
 
-const Button = ({
-  size = 'md',
-  isFull = false,
-  children,
-  color = 'mint',
-  subColor,
-  ...props
-}: ButtonProps) => {
-  const sub = subColor
-    ? theme.colors[subColor]
-    : darkenColor(theme.colors[color], 40);
-  return (
-    <StyledButton
-      {...props}
-      $size={size}
-      $color={color}
-      $subColor={sub}
-      $isFull={isFull}
-    >
-      {children}
-    </StyledButton>
-  );
-};
+const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+  (
+    {
+      size = 'md',
+      isFull = false,
+      children,
+      color = 'mint',
+      subColor,
+      ...props
+    },
+    ref,
+  ) => {
+    const sub = subColor
+      ? theme.colors[subColor]
+      : darkenColor(theme.colors[color], 40);
+    return (
+      <StyledButton
+        {...props}
+        ref={ref}
+        $size={size}
+        $color={color}
+        $subColor={sub}
+        $isFull={isFull}
+      >
+        {children}
+      </StyledButton>
+    );
+  },
+);
+
+Button.displayName = 'Button';
 
 export default Button;
 

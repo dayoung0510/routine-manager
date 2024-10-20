@@ -516,7 +516,6 @@ export const putSpecialTodoStatus = async ({
   specialTodoId: string;
   isDone: boolean;
 }) => {
-  console.log('22', userId, date, specialTodoId, isDone);
   const docRef = doc(
     db,
     'users',
