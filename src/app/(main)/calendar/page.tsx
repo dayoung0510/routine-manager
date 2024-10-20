@@ -8,6 +8,7 @@ import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import { useAtomValue } from 'jotai';
 import { userAtom } from 'atoms/user';
+import CalendarModal from 'components/organisms/CalendarModal';
 
 type ValuePiece = Date | null;
 type Value = ValuePiece | [ValuePiece, ValuePiece];
@@ -17,11 +18,24 @@ const CalendarPage = () => {
 
   const [mounted, setMounted] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
+  const [modalOpen, setModalOpen] = useState(false);
 
-  const { data } = useGetDateList({ userId: user.id });
+  // 모든데이터가 아닌, 한달치 데이터만 불러오기 위함
+  const [renderedYear, setRenderedYear] = useState<number | undefined>(
+    selectedDate ? selectedDate.getFullYear() : undefined,
+  );
+  const [renderedMonth, setRenderedMonth] = useState<number | undefined>(
+    selectedDate ? selectedDate.getMonth() + 1 : undefined,
+  );
+
+  const { data } = useGetDateList({
+    userId: user.id,
+    year: renderedYear,
+    month: renderedMonth,
+  });
   const recordedDateList = data?.map((i) => i.date);
 
-  console.log(data);
+  const today = dayjs().format('YYYYMMDD');
 
   useEffect(() => {
     setMounted(true);
@@ -33,20 +47,47 @@ const CalendarPage = () => {
         <StyledCalendar
           locale="en-EN"
           value={selectedDate}
+          onClickDay={(date) => {
+            const formattedDate = dayjs(date).format('YYYYMMDD');
+            if (recordedDateList?.includes(formattedDate)) {
+              setSelectedDate(date);
+              setModalOpen(true);
+            }
+          }}
           formatDay={(_, date) => dayjs(date).format('DD')}
           formatShortWeekday={(_, value) => dayjs(value).format('dd')}
+          onActiveStartDateChange={({ activeStartDate }) => {
+            if (activeStartDate) {
+              const year = activeStartDate?.getFullYear();
+              const month = activeStartDate?.getMonth() + 1; // getMonth()는 0부터 시작하므로 +1
+              setRenderedYear(year);
+              setRenderedMonth(month);
+            }
+          }}
           tileContent={({ date, view }) => {
             const stringValue = dayjs(date).format('YYYYMMDD');
             if (recordedDateList?.includes(stringValue)) {
               return (
                 <div className="score">
-                  ({data?.find((i) => i.date === stringValue)?.score})
+                  {data?.find((i) => i.date === stringValue)?.score}
                 </div>
               );
             }
             return <></>;
           }}
         />
+
+        {modalOpen && user.id && (
+          <CalendarModal
+            open={modalOpen}
+            onClose={() => {
+              setSelectedDate(null);
+              setModalOpen(false);
+            }}
+            date={dayjs(selectedDate).format('YYYYMMDD')}
+            userId={user.id}
+          />
+        )}
       </div>
     )
   );
@@ -70,8 +111,14 @@ const StyledCalendar = styled(Calendar)`
     align-items: center;
   }
 
-  /* 달력 타일 */
+  /* 평일 달력 타일 */
   .react-calendar__tile {
+    color: ${({ theme }) => theme.colors.black5};
+  }
+
+  /* 주말 달력 타일 */
+  .react-calendar__month-view__days__day--weekend {
+    color: ${({ theme }) => theme.colors.black5};
   }
 
   /* 선택된 날짜 타일 */
@@ -94,19 +141,19 @@ const StyledCalendar = styled(Calendar)`
 
   /* 오늘 날짜 스타일 */
   .react-calendar__tile--now {
-    color: ${({ theme }) => theme.colors.black0};
-  }
+    background: 0 !important;
+    background-color: 0 !important;
 
-  .react-calendar__month-view__days__day--weekend {
-    color: black;
+    abbr {
+      color: ${({ theme }) => theme.colors.black0};
+      text-decoration: underline;
+    }
   }
 
   /* 요일 텍스트 */
   .react-calendar__month-view__weekdays {
-    abbr {
-      color: ${({ theme }) => theme.colors.black9};
-      letter-spacing: 2px;
-    }
+    color: ${({ theme }) => theme.colors.black9};
+    letter-spacing: 2px;
   }
 
   /* 토요일 요일 스타일 */
@@ -120,6 +167,9 @@ const StyledCalendar = styled(Calendar)`
   }
 
   .score {
-    color: ${({ theme }) => theme.colors.purple};
+    padding: 1px 5px;
+    background-color: ${({ theme }) => theme.colors.red};
+    color: #fff;
+    border-radius: 0.5rem;
   }
 `;

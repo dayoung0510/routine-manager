@@ -12,6 +12,7 @@ import {
   setDoc,
   deleteDoc,
   writeBatch,
+  Timestamp,
 } from 'firebase/firestore';
 import dayjs from 'dayjs';
 import { v4 as uuidv4 } from 'uuid';
@@ -531,16 +532,18 @@ export const putTodayTask = async ({
   date,
   taskId,
   isDone,
+  content,
 }: {
   userId: string;
   date: string;
   taskId: string;
   isDone: boolean;
+  content: string;
 }) => {
   const docRef = doc(db, 'users', userId, 'records', date, 'tasks', taskId);
   await setDoc(
     docRef,
-    { isDone, createdAt: dayjs().format('YYYY-MM-DD HH:mm') },
+    { isDone, content, createdAt: dayjs().format('YYYY-MM-DD HH:mm') },
     { merge: true },
   );
 };
@@ -563,7 +566,11 @@ export const getTodayDoneTaskList = async ({
       ...doc.data(),
     }));
 
-    return completedTasks as { taskId: string; isDone: boolean }[];
+    return completedTasks as {
+      taskId: string;
+      isDone: boolean;
+      content: string;
+    }[];
   } catch (e) {
     console.log('err', e);
   }
@@ -581,14 +588,38 @@ export const putTodayScore = async ({
 }) => {
   const docRef = doc(db, 'users', userId, 'records', date);
 
-  await setDoc(docRef, { score }, { merge: true });
+  await setDoc(docRef, { score, createdAt: new Date() }, { merge: true });
 };
 
-// 특정유저의 기록이 있는 날짜목록 불러오기(for 캘린더)
-export const getDateList = async ({ userId }: { userId: string }) => {
+// 특정유저의 기록이 있는 특정 월의 날짜목록 불러오기(for 캘린더)
+export const getDateList = async ({
+  userId,
+  year,
+  month,
+}: {
+  userId: string;
+  year: number;
+  month: number;
+}) => {
   try {
+    // 월의 시작일 계산 (해당 월의 1일)
+    const startDate = new Date(year, month - 1, 1); // JavaScript에서 month는 0부터 시작하므로 month - 1
+    // 월의 종료일 계산 (다음 달의 1일 - 1초)
+    const endDate = new Date(year, month, 0, 23, 59, 59); // 해당 월의 마지막 날
+
+    // Firestore의 Timestamp로 변환
+    const startTimestamp = Timestamp.fromDate(startDate);
+    const endTimestamp = Timestamp.fromDate(endDate);
+
     const collectionRef = collection(db, 'users', userId, 'records');
-    const docSnap = await getDocs(collectionRef);
+
+    const q = query(
+      collectionRef,
+      where('createdAt', '>=', startTimestamp),
+      where('createdAt', '<=', endTimestamp),
+    );
+
+    const docSnap = await getDocs(q);
     const data = docSnap.docs.map((doc) => ({
       date: doc.id,
       ...doc.data(),
@@ -597,5 +628,35 @@ export const getDateList = async ({ userId }: { userId: string }) => {
     return data as { date: string; score: string }[];
   } catch (error) {
     console.error('Error getting documents:', error);
+  }
+};
+
+/* 특정날짜의 tasks 목록 불러오기 */
+/* 특정날짜의 special todo 불러오기 */
+export const getTasks = async ({
+  userId,
+  date,
+}: {
+  userId: string;
+  date: string;
+}) => {
+  try {
+    const collectionRef = collection(
+      db,
+      'users',
+      userId,
+      'records',
+      date,
+      'tasks',
+    );
+
+    const querySnapshot = await getDocs(collectionRef);
+    const tasks = querySnapshot.docs.map((doc) => ({
+      ...doc.data(),
+    }));
+
+    return tasks as { content: string; isDone: boolean }[];
+  } catch (e) {
+    console.log(e);
   }
 };

@@ -76,9 +76,15 @@ const DailyPage = () => {
         { date: today, content: specialInput, userId: user.id },
         {
           onSuccess: () => {
-            queryClient.invalidateQueries({
-              queryKey: ['specialTodos', today],
-            });
+            queryClient.setQueryData(
+              ['specialTodos', today],
+              (oldData: any) => {
+                return [
+                  ...(oldData || []),
+                  { date: today, content: specialInput, userId: user.id },
+                ];
+              },
+            );
             setSpecialModal(false);
             toast.success('SUCCESS!');
           },
@@ -112,13 +118,30 @@ const DailyPage = () => {
   const doneTaskList = todayDoneTasks?.map((i) => i.taskId);
 
   // 오늘의 태스크 상태 토글
-  const handleToggleTodayTask = (taskId: string) => {
+  const handleToggleTodayTask = (taskId: string, content: string) => {
     if (user.id) {
       const payload = {
         userId: user.id,
         date: today,
         taskId,
+        content,
       };
+
+      // 오늘 처음 토글누른거면 일단 오늘의 모든 tasks 목록을 DB에 넣기
+      if (doneTaskList && doneTaskList.length === 0) {
+        tasks?.forEach((task) => {
+          if (task.taskId && user.id) {
+            toggleTask({
+              userId: user.id,
+              date: today,
+              taskId: task.taskId,
+              content: task.content,
+              isDone: false,
+            });
+          }
+        });
+      }
+
       if (doneTaskList?.includes(taskId)) {
         toggleTask(
           { ...payload, isDone: false },
@@ -175,7 +198,7 @@ const DailyPage = () => {
                 style={{ position: 'relative' }}
                 onClick={() => {
                   if (task.taskId) {
-                    handleToggleTodayTask(task.taskId);
+                    handleToggleTodayTask(task.taskId, task.content);
                   }
                 }}
               >

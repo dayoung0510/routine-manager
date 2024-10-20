@@ -14,6 +14,7 @@ import {
   getTodayDoneTaskList,
   putTodayScore,
   getDateList,
+  getTasks,
 } from 'apis/apis';
 
 export const usePostTask = () => {
@@ -142,14 +143,40 @@ export const usePutTodayScore = () => {
   return useMutation({ mutationFn: putTodayScore });
 };
 
-export const useGetDateList = ({ userId }: { userId?: string }) => {
+export const useGetDateList = ({
+  userId,
+  year,
+  month,
+}: {
+  userId?: string;
+  year?: number;
+  month?: number;
+}) => {
+  return useQuery({
+    queryFn: () => {
+      if (userId && month && year) {
+        return getDateList({ userId, year, month });
+      }
+    },
+    queryKey: ['recordsSpecialTodos', userId, year, month],
+    enabled: !!userId && !!year && !!month,
+  });
+};
+
+export const useGetTasks = ({
+  userId,
+  date,
+}: {
+  userId?: string;
+  date: string;
+}) => {
   return useQuery({
     queryFn: () => {
       if (userId) {
-        return getDateList({ userId });
+        return getTasks({ userId, date });
       }
     },
-    queryKey: ['allRecords', userId],
+    queryKey: ['recordsTasks', userId, date],
     enabled: !!userId,
   });
 };
