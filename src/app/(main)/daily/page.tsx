@@ -43,17 +43,20 @@ const DailyPage = () => {
   const queryClient = useQueryClient();
   const today = dayjs().format('YYYYMMDD').toString();
 
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const targetDay = dayjs(selectedDate).format('YYYYMMDD');
+
   const inputRef = useRef<HTMLInputElement>(null);
 
   const { data: tasks } = useGetUserIdActiveTasks(user.id);
   const { data: categories } = useGetCategories();
   const { data: todayDoneTasks } = useGetTodayDoneTaskList({
     userId: user.id,
-    date: today,
+    date: targetDay,
   });
   const { data: specialTodos } = useGetSpecialTodos({
     userId: user.id,
-    date: today,
+    date: targetDay,
   });
 
   const { mutate: addSpecialTodo } = usePostSpecialTodo();
@@ -77,11 +80,16 @@ const DailyPage = () => {
   const handleClickSpecialAdd = () => {
     if (user.id) {
       addSpecialTodo(
-        { date: today, content: specialInput, userId: user.id, isDone: false },
+        {
+          date: targetDay,
+          content: specialInput,
+          userId: user.id,
+          isDone: false,
+        },
         {
           onSuccess: (res) => {
             queryClient.invalidateQueries({
-              queryKey: ['specialTodos', today],
+              queryKey: ['specialTodos', targetDay],
             });
             setSpecialModal(false);
             toast.success('SUCCESS!');
@@ -98,13 +106,13 @@ const DailyPage = () => {
         {
           userId: user.id,
           specialTodoId: id,
-          date: today,
+          date: targetDay,
           isDone: !currentStatus ?? true,
         },
         {
           onSuccess: () => {
             queryClient.invalidateQueries({
-              queryKey: ['specialTodos', today],
+              queryKey: ['specialTodos', targetDay],
             });
           },
         },
@@ -116,11 +124,11 @@ const DailyPage = () => {
   const handleDeleteSpecialTodo = (specialTodoId: string) => {
     if (user.id) {
       deleteSpecialTodo(
-        { userId: user.id, specialTodoId, date: today },
+        { userId: user.id, specialTodoId, date: targetDay },
         {
           onSuccess: () => {
             queryClient.invalidateQueries({
-              queryKey: ['specialTodos', today],
+              queryKey: ['specialTodos', targetDay],
             });
             toast.success('DELETED!');
           },
@@ -137,7 +145,7 @@ const DailyPage = () => {
     if (user.id) {
       const payload = {
         userId: user.id,
-        date: today,
+        date: targetDay,
         taskId,
         content,
       };
@@ -148,7 +156,7 @@ const DailyPage = () => {
           if (task.taskId && user.id) {
             toggleTask({
               userId: user.id,
-              date: today,
+              date: targetDay,
               taskId: task.taskId,
               content: task.content,
               isDone: false,
@@ -162,7 +170,7 @@ const DailyPage = () => {
           { ...payload, isDone: false },
           {
             onSuccess: () => {
-              queryClient.invalidateQueries({ queryKey: ['tasks', today] });
+              queryClient.invalidateQueries({ queryKey: ['tasks', targetDay] });
             },
           },
         );
@@ -171,7 +179,7 @@ const DailyPage = () => {
           { ...payload, isDone: true },
           {
             onSuccess: () => {
-              queryClient.invalidateQueries({ queryKey: ['tasks', today] });
+              queryClient.invalidateQueries({ queryKey: ['tasks', targetDay] });
             },
           },
         );
@@ -191,7 +199,7 @@ const DailyPage = () => {
     if (score && user.id) {
       saveTodayScore({
         userId: user.id,
-        date: today,
+        date: targetDay,
         score: score.toString(),
       });
     }
@@ -311,8 +319,30 @@ const DailyPage = () => {
       </DailyAndSpecialContainer>
 
       <ScoreWrapper>
-        <p>TODAY SCORE</p>
-        <p>{score}</p>
+        <Flex $gap={{ column: 20 }}>
+          <p className="score">TODAY SCORE</p>
+          <p className="score">{score}</p>
+        </Flex>
+
+        <Flex $gap={{ column: 8 }}>
+          <div
+            onClick={() => {
+              const target = dayjs(selectedDate).subtract(1, 'day');
+              setSelectedDate(target.toDate());
+            }}
+          >
+            <Icon size={18} name="arrowL" />
+          </div>
+          <DateTypo>{dayjs(selectedDate).format('YYYY-MM-DD(dd)')}</DateTypo>
+          <div
+            onClick={() => {
+              const target = dayjs(selectedDate).add(1, 'day');
+              setSelectedDate(target.toDate());
+            }}
+          >
+            <Icon size={18} name="arrowR" />
+          </div>
+        </Flex>
       </ScoreWrapper>
 
       {specialModal && (
@@ -399,6 +429,11 @@ const Title = styled.p`
   }
 `;
 
+const DateTypo = styled.p`
+  font-size: 18px;
+  color: ${({ theme }) => theme.colors.black5};
+`;
+
 const ScoreWrapper = styled.div`
   position: absolute;
   bottom: 0;
@@ -407,10 +442,10 @@ const ScoreWrapper = styled.div`
   background-color: ${({ theme }) => theme.colors.lightGray};
   width: 100%;
   display: flex;
-  justify-content: flex-start;
+  justify-content: space-between;
   align-items: center;
-  column-gap: 20px;
-  p {
+
+  p.score {
     font-size: 36px;
   }
 
