@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import Button from 'components/atoms/Button';
 import Icon from 'components/atoms/icon/Icon';
+import { useMediaQuery } from 'hooks/useMediaQuery';
 
 type Props = {
   handleScore: (score: number) => void;
@@ -8,6 +9,8 @@ type Props = {
 };
 
 const ScorePanel = ({ score, handleScore }: Props) => {
+  const isMobile = useMediaQuery();
+
   const handleMinus = () => {
     handleScore(score - 1);
   };
@@ -48,6 +51,10 @@ const Container = styled.div`
   justify-content: space-between;
   align-items: center;
   column-gap: 1rem;
+
+  ${({ theme }) => theme.device.mobile} {
+    column-gap: 0.5rem;
+  }
 `;
 
 const ScoreWrapper = styled.div`

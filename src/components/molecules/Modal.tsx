@@ -102,8 +102,8 @@ const StyledModal = styled.div<{ $width?: number; $height?: number }>`
   transform: translate(-50%, -50%);
   background-color: #fff;
   padding: 0.5rem;
-  width: ${(props) => `${props.$width}px` ?? 'auto'};
-  height: ${(props) => `${props.$height}px` ?? 'auto'};
+  width: ${(props) => `${props.$width}px`};
+  height: ${(props) => `${props.$height}px`};
 
   /* pixel art style border */
   box-shadow:

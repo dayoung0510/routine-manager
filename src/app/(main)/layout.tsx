@@ -43,7 +43,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
         style={{
           position: 'relative',
           width: isMobile ? '100%' : '850px',
-          height: isMobile ? 'calc(100vh - 2rem)' : '100%',
+          height: isMobile ? 'calc(100vh - 7rem)' : '100%',
           maxHeight: isMobile ? '100%' : '550px',
         }}
       >
@@ -90,6 +90,10 @@ const Container = styled.div`
   align-items: center;
   flex-direction: column;
   padding: 1rem;
+
+  ${({ theme }) => theme.device.mobile} {
+    justify-content: flex-start;
+  }
 
   background-color: ${({ theme }) => theme.colors.black7};
   ${bg.slash5}
@@ -160,6 +164,7 @@ const ChildrenWrapper = styled.div`
   color: black;
 
   ${({ theme }) => theme.device.mobile} {
+    padding: 12px 4px;
   }
 `;
 

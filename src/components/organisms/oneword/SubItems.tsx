@@ -16,6 +16,7 @@ import { toast } from 'react-toastify';
 import { OnewordSubItemType } from 'apis/apis';
 import Modal from 'components/molecules/Modal';
 import Circle, { colors } from 'components/atoms/Circle';
+import { useMediaQuery } from 'hooks/useMediaQuery';
 
 type SubItemsProps = {
   userId: string;
@@ -24,6 +25,8 @@ type SubItemsProps = {
 
 const SubItems = ({ userId, onewordId }: SubItemsProps) => {
   const router = useRouter();
+
+  const isMobile = useMediaQuery();
 
   const [selectedItem, setSelectedItem] = useState<
     OnewordSubItemType | undefined
@@ -152,8 +155,7 @@ const SubItems = ({ userId, onewordId }: SubItemsProps) => {
             </GridItem>
           ))}
         </Grid>
-
-        <Flex $gap={{ column: 16 }} style={{ position: 'absolute', bottom: 0 }}>
+        <AddItemContainer>
           <Pallete $gap={{ column: 16 }}>
             {colors.map(({ color, id }) => (
               <Circle
@@ -170,11 +172,12 @@ const SubItems = ({ userId, onewordId }: SubItemsProps) => {
             placeholder="ADD SUB ITEM"
             value={text ?? ''}
             onChange={(e) => setText(e.target.value)}
+            style={{ width: '100%' }}
           />
           <div onClick={handleClickAdd}>
             <Icon name="check" />
           </div>
-        </Flex>
+        </AddItemContainer>
       </Flex>
 
       {selectedItem?.subitemId && (
@@ -255,6 +258,10 @@ const Grid = styled.div`
   grid-template-columns: repeat(3, 1fr);
   row-gap: 24px;
   column-gap: 24px;
+
+  ${({ theme }) => theme.device.mobile} {
+    grid-template-columns: repeat(1, 1fr);
+  }
 `;
 
 const GridItem = styled.div<{ $color: string }>`
@@ -280,4 +287,18 @@ const Item = styled.div<{ $isDone: boolean }>`
       `
     );
   }}
+`;
+
+const AddItemContainer = styled(Flex)`
+  column-gap: 16px;
+  position: absolute;
+  bottom: 0;
+  flex-direction: row;
+
+  ${({ theme }) => theme.device.mobile} {
+    flex-direction: column;
+    position: relative;
+    margin: 36px 0;
+    row-gap: 16px;
+  }
 `;

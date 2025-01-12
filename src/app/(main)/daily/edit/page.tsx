@@ -21,12 +21,15 @@ import Flex from 'components/atoms/Flex';
 import { useRouter } from 'next/navigation';
 import SelectCategories from 'components/molecules/SelectCategories';
 import Icon from 'components/atoms/icon/Icon';
+import { useMediaQuery } from 'hooks/useMediaQuery';
 
 type FormType = { tasks: Omit<TaskType, 'userId'>[] };
 
 const Setting = () => {
   const [point, setPoint] = useState(0);
   const router = useRouter();
+
+  const isMobile = useMediaQuery();
 
   const user = useAtomValue(userAtom);
 
@@ -199,52 +202,63 @@ const Setting = () => {
                         }}
                       />
 
-                      <Controller
-                        key={field.id}
-                        name={`tasks.${index}.content`}
-                        control={control}
-                        rules={{ required: true }}
-                        render={({ field }) => {
-                          return (
-                            <Input
-                              placeholder={`daily task ${index + 1}`}
-                              style={{ width: '70%' }}
-                              {...field}
-                            />
-                          );
-                        }}
-                      />
-                      <Controller
-                        name={`tasks.${index}.point`}
-                        control={control}
-                        rules={{ required: true, min: 1, max: 10 }}
-                        render={({ field: { value, onChange } }) => {
-                          return (
-                            <ScorePanel
-                              score={value as number}
-                              handleScore={(v) => onChange(v)}
-                            />
-                          );
-                        }}
-                      />
-                      <IconWrapper
-                        onClick={() => {
-                          if (fields.length > 1) {
-                            return remove(index);
-                          } else {
-                            return toast.error('There should be at least one!');
-                          }
-                        }}
-                      >
-                        <Icon name="close" />
-                      </IconWrapper>
+                      <Flex $gap={{ column: 16 }} style={{ flex: 1 }}>
+                        <Controller
+                          key={field.id}
+                          name={`tasks.${index}.content`}
+                          control={control}
+                          rules={{ required: true }}
+                          render={({ field }) => {
+                            return (
+                              <Input
+                                placeholder={`daily task ${index + 1}`}
+                                style={{ width: '100%' }}
+                                {...field}
+                              />
+                            );
+                          }}
+                        />
+
+                        <Flex $gap={{ column: 4 }}>
+                          <Controller
+                            name={`tasks.${index}.point`}
+                            control={control}
+                            rules={{ required: true, min: 1, max: 10 }}
+                            render={({ field: { value, onChange } }) => {
+                              return (
+                                <ScorePanel
+                                  score={value as number}
+                                  handleScore={(v) => onChange(v)}
+                                />
+                              );
+                            }}
+                          />
+                          <IconWrapper
+                            onClick={() => {
+                              if (fields.length > 1) {
+                                return remove(index);
+                              } else {
+                                return toast.error(
+                                  'There should be at least one!',
+                                );
+                              }
+                            }}
+                          >
+                            <Icon name="close" />
+                          </IconWrapper>
+                        </Flex>
+                      </Flex>
                     </Row>
                   );
                 })}
           </RowsContainer>
         </div>
 
-        <Button type="submit" disabled={!isDirty || !isValid}>
+        <Button
+          type="submit"
+          disabled={!isDirty || !isValid}
+          style={{ marginTop: '3rem' }}
+        >
           CONFIRM
         </Button>
       </Container>
@@ -260,6 +274,8 @@ const Container = styled.div`
   width: 100%;
   height: 100%;
   justify-content: space-between;
+  overflow-y: auto;
+  padding: 12px 12px 12px 16px;
 `;
 
 const RowsContainer = styled.div`
@@ -267,6 +283,10 @@ const RowsContainer = styled.div`
   flex-direction: column;
   justify-content: center;
   row-gap: 1rem;
+
+  ${({ theme }) => theme.device.mobile} {
+    row-gap: 3rem;
+  }
 `;
 
 const PlusButtonWrapper = styled.div`
@@ -283,7 +303,6 @@ const Input = styled.input`
   font-size: 1.2rem;
   background: none;
   border-bottom: 2px solid ${({ theme }) => theme.colors.black3};
-  /* flex: 1; */
 
   &::placeholder {
     color: ${({ theme }) => theme.colors.black9};
@@ -295,6 +314,12 @@ const Row = styled.div`
   display: flex;
   justify-content: space-between;
   column-gap: 1rem;
+  flex-direction: row;
+
+  ${({ theme }) => theme.device.mobile} {
+    flex-direction: column;
+    row-gap: 1rem;
+  }
 `;
 
 const PointWrapper = styled.div<{ $isError: boolean }>`

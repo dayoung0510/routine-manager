@@ -25,6 +25,7 @@ import { useEffect, useRef, useState } from 'react';
 import Input from 'components/atoms/Input';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
+import { useMediaQuery } from 'hooks/useMediaQuery';
 
 type Colortype = keyof typeof theme.colors;
 
@@ -39,6 +40,8 @@ const colorMap: Record<string, Colortype> = {
 
 const DailyPage = () => {
   const user = useAtomValue(userAtom);
+
+  const isMobile = useMediaQuery();
 
   const queryClient = useQueryClient();
   const today = dayjs().format('YYYYMMDD').toString();
@@ -107,7 +110,7 @@ const DailyPage = () => {
           userId: user.id,
           specialTodoId: id,
           date: targetDay,
-          isDone: !currentStatus ?? true,
+          isDone: !currentStatus,
         },
         {
           onSuccess: () => {
@@ -320,7 +323,7 @@ const DailyPage = () => {
 
       <ScoreWrapper>
         <Flex $gap={{ column: 20 }}>
-          <p className="score">TODAY SCORE</p>
+          {!isMobile && <p className="score">TODAY SCORE</p>}
           <p className="score">{score}</p>
         </Flex>
 
@@ -405,7 +408,7 @@ const RowContainer = styled.div`
 
   ${({ theme }) => theme.device.mobile} {
     grid-template-columns: repeat(2, 1fr);
-    padding: 16px;
+    padding: 21px 16px;
   }
 `;
 const Text = styled.div`
@@ -445,8 +448,11 @@ const ScoreWrapper = styled.div`
   justify-content: space-between;
   align-items: center;
 
-  p.score {
+  p.score1 {
     font-size: 36px;
+  }
+  p.score2 {
+    font-size: 12px;
   }
 
   p:first-child {
@@ -466,4 +472,5 @@ const IconWrapper = styled.div`
 
 const DailyAndSpecialContainer = styled(Flex)`
   height: calc(100% - 36px);
+  overflow-y: auto;
 `;
