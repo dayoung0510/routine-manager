@@ -99,6 +99,7 @@ const Pin = ({
               <input
                 type="password"
                 maxLength={2}
+                inputMode="numeric"
                 value={value}
                 onKeyDown={(e) => {
                   if (e.key === 'Backspace') {
